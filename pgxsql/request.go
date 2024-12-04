@@ -104,7 +104,7 @@ func (r *request) setTimeout(ctx context.Context) context.Context {
 }
 
 func buildUri(root, resource string) string {
-	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", module.Authority, "database-name", root, resource)
+	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", module.Domain, "database-name", root, resource)
 	//originUrn(nid, nss, test) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, test)
 }
 

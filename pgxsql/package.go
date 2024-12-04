@@ -56,7 +56,7 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
 	req := newQueryRequestFromValues(resource, template, values, args...)
-	req.Header().Set(core.XTo, module.Authority)
+	req.Header().Set(core.XTo, module.Domain)
 	start := time.Now().UTC()
 	_, resp, status1 := core.ExchangeHeaders(h)
 	if resp != "" || status1 != "" {
