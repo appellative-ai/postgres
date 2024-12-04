@@ -53,7 +53,7 @@ func testStartup() error {
 
 	m := make(map[string]string)
 	m[uriConfigKey] = serviceUrl
-	msg := messaging.NewMessage(messaging.ChannelControl, PkgPath, "", messaging.StartupEvent)
+	msg := messaging.NewMessage(messaging.ControlChannelType, PkgPath, "", messaging.StartupEvent, nil)
 	msg.SetContent(messaging.ContentTypeConfig, m)
 	host.Exchange.Send(msg)
 	time.Sleep(time.Second * 3)

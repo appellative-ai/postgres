@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"

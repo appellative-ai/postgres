@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/core/jsonx"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 

@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"context"
 	"fmt"
-	"github.com/advanced-go/postgresql/module"
-	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/behavioral-ai/postgres/module"
+	"github.com/behavioral-ai/postgres/pgxdml"
 	"net/http"
 	"time"
 )

@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/behavioral-ai/postgres/pgxdml"
 	"time"
 )
 

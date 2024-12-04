@@ -5,13 +5,14 @@ import (
 	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/core/jsonx"
 	"github.com/behavioral-ai/postgres/module"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
 	"time"
 )
 
 const (
-	PkgPath       = "github/advanced-go/postgresql/pgxsql"
+	PkgPath       = "github/behavioral-ai/postgres/pgxsql"
 	userConfigKey = "user"
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"

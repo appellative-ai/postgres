@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/behavioral-ai/core/core"
+	"github.com/jackc/pgx/v5"
 )
 
 // Query - function for a Query
