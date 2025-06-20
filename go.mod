@@ -3,7 +3,7 @@ module github.com/behavioral-ai/postgres
 go 1.21.4
 
 require (
-	github.com/behavioral-ai/core v0.0.0-20241204004648-19df76691f5e
+	github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1
 	github.com/jackc/pgx/v5 v5.7.1
 )
 

@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/behavioral-ai/core/jsonx"
+	"github.com/behavioral-ai/core/json"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -27,8 +27,8 @@ func newCmdTag(tag pgconn.CommandTag) CommandTag {
 }
 
 func NewCommandTag(url string) CommandTag {
-	tag, status := jsonx.New[CommandTag](url, nil)
-	if !status.OK() {
+	tag, status := json.New[CommandTag](url, nil)
+	if status != nil {
 		return CommandTag{}
 	}
 	return tag

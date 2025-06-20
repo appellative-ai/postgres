@@ -3,7 +3,7 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/core"
+	"github.com/behavioral-ai/core/fmtx"
 	"reflect"
 	"strings"
 	"time"
@@ -28,7 +28,7 @@ func FmtValue(v any) (string, error) {
 	}
 	// Process time.Time first
 	if t1, ok := v.(time.Time); ok {
-		return fmt.Sprintf(stringFmt, core.FmtRFC3339Millis(t1)), nil
+		return fmt.Sprintf(stringFmt, fmtx.FmtRFC3339Millis(t1)), nil
 	}
 	if t.Kind() != reflect.String {
 		return fmt.Sprintf(valueFmt, v), nil

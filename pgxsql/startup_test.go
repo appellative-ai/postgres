@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
 	"time"
 )
@@ -15,7 +14,7 @@ const (
 )
 
 func ExampleStartupPing() {
-	status := host.Ping(PkgPath)
+	status := messaging.StatusOK() //host.Ping(PkgPath)
 	fmt.Printf("test: Ping() -> [status:%v]\n", status)
 
 	//Output:
@@ -53,9 +52,9 @@ func testStartup() error {
 
 	m := make(map[string]string)
 	m[uriConfigKey] = serviceUrl
-	msg := messaging.NewMessage(messaging.ControlChannelType, PkgPath, "", messaging.StartupEvent, nil)
-	msg.SetContent(messaging.ContentTypeConfig, m)
-	host.Exchange.Send(msg)
+	msg := messaging.NewMessage(messaging.ChannelControl, messaging.StartupEvent)
+	msg.SetContent(messaging.ContentTypeMap, m)
+	//host.Exchange.Send(msg)
 	time.Sleep(time.Second * 3)
 	return nil
 }

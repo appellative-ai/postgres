@@ -1,13 +1,8 @@
 package pgxsql
 
 import (
-	"fmt"
-	"github.com/behavioral-ai/core/core"
-	"github.com/behavioral-ai/core/host"
 	"github.com/behavioral-ai/core/messaging"
-	"net/http"
 	"sync/atomic"
-	"time"
 )
 
 var (
@@ -28,24 +23,28 @@ func resetReady() {
 }
 
 func init() {
-	a, err1 := host.RegisterControlAgent(PkgPath, messageHandler)
-	if err1 != nil {
-		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err1)
-	}
-	a.Run()
+	//a, err1 := host.RegisterControlAgent(PkgPath, messageHandler)
+	//if err1 != nil {
+	//	fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err1)
+	//	}
+	//	a.Run()
 }
 
+/*
 func messageHandler(msg *messaging.Message) {
 	switch msg.Event() {
 	case messaging.StartupEvent:
 		start := time.Now()
 		// TODO
 		//clientStartup(msg)
-		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
 	case messaging.ShutdownEvent:
 		clientShutdown()
 	case messaging.PingEvent:
 		start := time.Now()
-		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messaging.Reply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
 	}
 }
+
+
+*/

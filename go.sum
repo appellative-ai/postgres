@@ -1,5 +1,7 @@
 github.com/behavioral-ai/core v0.0.0-20241204004648-19df76691f5e h1:L0lrlPb73CNyGV7faFRMiENf8w/YAhCyiD+n4QuL27Y=
 github.com/behavioral-ai/core v0.0.0-20241204004648-19df76691f5e/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1 h1:NgRTVev7BdoCozgNFE0FsPwPXp/jRRZHuAjAoEb95nc=
+github.com/behavioral-ai/core v0.0.0-20250619231026-497e42358dc1/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

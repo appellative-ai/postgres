@@ -7,11 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"net/http"
-	"time"
 )
 
 var (
@@ -26,14 +23,14 @@ func clientMessageHandler(msg *messaging.Message) {
 	if isReady() {
 		return
 	}
-	start := time.Now()
-	err := clientStartup2(msg.Config())
-	if err != nil {
-		// TODO
-		//messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
-		return
-	}
-	messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
+	//start := time.Now()
+	//err := clientStartup2(msg.Config())
+	////if err != nil {
+	// TODO
+	//messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
+	return
+	//}
+	//messaging.Reply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired

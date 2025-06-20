@@ -2,8 +2,8 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/behavioral-ai/core/core"
-	"github.com/behavioral-ai/core/jsonx"
+	"github.com/behavioral-ai/core/json"
+	"github.com/behavioral-ai/core/messaging"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -15,26 +15,31 @@ type Scanner[T any] interface {
 }
 
 // Unmarshal - templated function for JSON unmarshalling
-func Unmarshal[T Scanner[T]](t any) ([]T, *core.Status) {
+func Unmarshal[T Scanner[T]](t any) ([]T, *messaging.Status) {
 	if t == nil {
-		return []T{}, core.NewStatusError(core.StatusInvalidArgument, errors.New("error: source is nil"))
+		return []T{}, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error: source is nil"))
 	}
-	return jsonx.New[[]T](t, nil)
+	t2, err := json.New[[]T](t, nil)
+	//return json.New[[]T](t, nil)
+	if err != nil {
+		return t2, messaging.NewStatus(messaging.StatusJsonDecodeError, err)
+	}
+	return t2, messaging.StatusOK()
 }
 
 // Rows - templated function for creating rows
-func Rows[T Scanner[T]](entries []T) ([][]any, *core.Status) {
+func Rows[T Scanner[T]](entries []T) ([][]any, *messaging.Status) {
 	if len(entries) == 0 {
-		return nil, core.StatusNotFound()
+		return nil, messaging.StatusNotFound()
 	}
 	var t T
-	return t.Rows(entries), core.StatusOK()
+	return t.Rows(entries), messaging.StatusOK()
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *core.Status) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *messaging.Status) {
 	if rows == nil || rows.CommandTag().RowsAffected() == 0 {
-		return nil, core.StatusNotFound() //core.NewStatusError(core.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
+		return nil, messaging.StatusNotFound() //messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
 	}
 	var s T
 	var t []T
@@ -46,24 +51,24 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *core.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return t, core.NewStatusError(core.StatusInvalidArgument, err)
+			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return t, core.NewStatusError(core.StatusInvalidArgument, err)
+			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
 		}
 		val, err1 := s.Scan(names, values)
 		if err1 != nil {
-			return t, core.NewStatusError(core.StatusInvalidArgument, err1)
+			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err1)
 		}
 		t = append(t, val)
 		// Test this
 		//rows.Close()
 	}
 	if len(t) == 0 {
-		return t, core.StatusNotFound()
+		return t, messaging.StatusNotFound()
 	}
-	return t, core.StatusOK()
+	return t, messaging.StatusOK()
 }
 
 func createColumnNames(fields []pgconn.FieldDescription) []string {

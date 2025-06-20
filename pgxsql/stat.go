@@ -2,23 +2,23 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/behavioral-ai/core/core"
+	"github.com/behavioral-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func stat() (*pgxpool.Stat, *core.Status) {
+func stat() (*pgxpool.Stat, *messaging.Status) {
 	if dbClient == nil {
-		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL stat call : dbClient is nil"))
+		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL stat call : dbClient is nil"))
 	}
-	return dbClient.Stat(), core.StatusOK()
+	return dbClient.Stat(), messaging.StatusOK()
 }
 
 // Scrap
 //var limited = false
 //var fn func()
 
-//fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), StatUri, core.ContextRequestId(ctx), "GET")
+//fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), StatUri, messaging.ContextRequestId(ctx), "GET")
 //defer fn()
 //if limited {
-//	return nil, core.NewStatus(core.StatusRateLimited).SetRequestId(ctx)
+//	return nil, messaging.NewStatus(messaging.StatusRateLimited).SetRequestId(ctx)
 //}

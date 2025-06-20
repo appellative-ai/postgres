@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/core"
+	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/pgxdml"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -167,17 +167,17 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *core.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *messaging.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
-		return nil, core.NewStatus(http.StatusNotFound)
+		return nil, messaging.NewStatus(http.StatusNotFound, nil)
 	}
 	return conditions, status
 }
 
-func scanRows(rows pgx.Rows) ([]TestConditions, *core.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, *messaging.Status) {
 	if rows == nil {
-		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("invalid request: Rows interface is empty"))
+		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("invalid request: Rows interface is empty"))
 	}
 	var err error
 	var values []any
@@ -185,15 +185,15 @@ func scanRows(rows pgx.Rows) ([]TestConditions, *core.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return nil, core.NewStatusError(0, err)
+			return nil, messaging.NewStatus(0, err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return nil, core.NewStatusError(0, err)
+			return nil, messaging.NewStatus(0, err)
 		}
 		conditions = append(conditions, scanColumns(values))
 	}
-	return conditions, core.StatusOK()
+	return conditions, messaging.StatusOK()
 }
 
 func scanColumns(values []any) TestConditions {

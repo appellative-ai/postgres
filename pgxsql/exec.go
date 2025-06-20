@@ -3,15 +3,24 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/behavioral-ai/core/core"
+	"github.com/behavioral-ai/core/messaging"
 )
 
-func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Status) {
+const (
+	StatusTxnBeginError    = int(102) // Transaction processing begin error
+	StatusTxnRollbackError = int(103) // Transaction processing rollback error
+	StatusTxnCommitError   = int(104) // Transaction processing commit error
+	StatusExecError        = int(105) // Execution error, as in a database call
+	StatusNotStarted       = int(98)  // Not started
+
+)
+
+func exec(ctx context.Context, req *request) (tag CommandTag, status *messaging.Status) {
 	if req == nil {
-		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
+		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
 	if dbClient == nil {
-		status = core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
 		return
 	}
 	ctx = req.setTimeout(ctx)
@@ -19,7 +28,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
 	if err0 != nil {
-		status = core.NewStatusError(core.StatusTxnBeginError, err0)
+		status = messaging.NewStatus(StatusTxnBeginError, err0)
 		return tag, status
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
@@ -27,16 +36,16 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	defer txn.Rollback(ctx)
 	cmd, err := dbClient.Exec(ctx, buildSql(req), req.args)
 	if err != nil {
-		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx)
 	if err != nil {
-		status = core.NewStatusError(core.StatusTxnCommitError, err)
+		status = messaging.NewStatus(StatusTxnCommitError, err)
 	} else {
-		status = core.StatusOK()
+		status = messaging.StatusOK()
 	}
-	return newCmdTag(cmd), core.StatusOK()
+	return newCmdTag(cmd), messaging.StatusOK()
 }
 
 // scrap
