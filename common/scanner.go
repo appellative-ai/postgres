@@ -1,4 +1,4 @@
-package query
+package common
 
 import (
 	"errors"
@@ -20,7 +20,6 @@ func Unmarshal[T Scanner[T]](t any) ([]T, *messaging.Status) {
 		return []T{}, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error: source is nil"))
 	}
 	t2, err := json.New[[]T](t, nil)
-	//return json.New[[]T](t, nil)
 	if err != nil {
 		return t2, messaging.NewStatus(messaging.StatusJsonDecodeError, err)
 	}
