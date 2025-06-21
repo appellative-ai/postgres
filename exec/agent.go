@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/private"
-	"github.com/jackc/pgx/v5"
 	"net/http"
 	"time"
 )
@@ -86,9 +85,6 @@ func (a *agentT) run() {
 }
 
 func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag CommandTag, status *messaging.Status) {
-
-	//ctx = req.setTimeout(ctx)
-
 	// Transaction processing.
 	txn, err0 := a.state.DbClient.Begin(ctx)
 	if err0 != nil {
@@ -98,9 +94,9 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	// Rollback is safe to call even if the tx is already closed, so if
 	// the tx commits successfully, this is a no-op
 	defer txn.Rollback(ctx)
-	cmd, err := a.state.DbClient.Exec(ctx, buildSql(req), req.args)
+	cmd, err := a.state.DbClient.Exec(ctx, sql, args)
 	if err != nil {
-		status = messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, Recast(err))
 		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx)
@@ -112,22 +108,6 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	return newCmdTag(cmd), messaging.StatusOK()
 }
 
-func (a *agentT) query(ctx context.Context, sql string, args []any) (rows pgx.Rows, err error) {
-	//ctx = a.setTimeout(ctx)
-	return a.state.DbClient.Query(ctx, sql, args)
-}
-
-/*
-	func (a *agentT) setTimeout1(ctx context.Context) context.Context {
-		if ctx == nil {
-			return context.Background()
-		}
-		if d, ok := ctx.Deadline(); ok {
-			a.state.Until = time.Until(d)
-		}
-		return ctx
-	}
-*/
 func (a *agentT) statusCode(err error) int {
 	if err == nil {
 		return http.StatusOK

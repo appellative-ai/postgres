@@ -1,4 +1,4 @@
-package query
+package exec
 
 import (
 	"errors"
@@ -21,7 +21,7 @@ ColumnName
 DataTypeName
 ConstraintName
 */
-func recast(err error) error {
+func Recast(err error) error {
 	if err == nil {
 		return err
 	}
