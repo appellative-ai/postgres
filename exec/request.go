@@ -2,8 +2,7 @@ package exec
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/postgres/module"
-	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/behavioral-ai/postgres/common"
 	"net/http"
 	"time"
 )
@@ -48,8 +47,8 @@ type request struct {
 
 	values  [][]any
 	values2 map[string][]string
-	attrs   []pgxdml.Attr
-	where   []pgxdml.Attr
+	attrs   []common.Attr
+	where   []common.Attr
 	args    []any
 	error   error
 	h       http.Header
@@ -94,7 +93,7 @@ func (r *request) Protocol() string {
 }
 
 func buildUri(root, resource string) string {
-	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", module.Domain, "database-name", root, resource)
+	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", "invalid-domain", "database-name", root, resource)
 	//originUrn(nid, nss, test) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, test)
 }
 
@@ -105,7 +104,7 @@ func newInsertRequest(resource, template string, values [][]any, args ...any) *r
 	return r
 }
 
-func newUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
+func newUpdateRequest(resource, template string, attrs []common.Attr, where []common.Attr, args ...any) *request {
 	r := newRequest(updateCmd, resource, template, buildUri(execRoot, resource), updateRouteName)
 	r.attrs = attrs
 	r.where = where
@@ -113,7 +112,7 @@ func newUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pg
 	return r
 }
 
-func newDeleteRequest(resource, template string, where []pgxdml.Attr, args ...any) *request {
+func newDeleteRequest(resource, template string, where []common.Attr, args ...any) *request {
 	r := newRequest(deleteCmd, resource, template, buildUri(execRoot, resource), deleteRouteName)
 	r.where = where
 	r.args = args

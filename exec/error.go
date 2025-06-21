@@ -21,7 +21,8 @@ ColumnName
 DataTypeName
 ConstraintName
 */
-func Recast(err error) error {
+
+func recast(err error) error {
 	if err == nil {
 		return err
 	}

@@ -96,7 +96,7 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	defer txn.Rollback(ctx)
 	cmd, err := a.state.DbClient.Exec(ctx, sql, args)
 	if err != nil {
-		status = messaging.NewStatus(messaging.StatusInvalidArgument, Recast(err))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx)

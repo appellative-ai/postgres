@@ -1,9 +1,6 @@
 package query
 
-import (
-	"github.com/behavioral-ai/postgres/pgxdml"
-)
-
+/*
 func buildSql(r *request) string {
 	var stmt = r.template
 	var err error
@@ -11,3 +8,6 @@ func buildSql(r *request) string {
 	r.error = err
 	return stmt
 }
+
+
+*/
