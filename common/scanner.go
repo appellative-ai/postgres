@@ -8,6 +8,10 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+type Variant interface {
+	Get() ([]byte, *messaging.Status)
+}
+
 // Scanner - templated interface for scanning rows
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
