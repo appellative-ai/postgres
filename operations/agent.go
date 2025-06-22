@@ -3,17 +3,25 @@ package operations
 import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/postgres/exec"
+	"github.com/behavioral-ai/postgres/query"
 	"time"
 )
 
 const (
-	NamespaceName = "common:core:agent/operations/collective"
+	NamespaceName = "sql:postgres:agent/operations/postgres"
 	duration      = time.Second * 30
 )
 
 var (
 	agent *agentT
+	Agent messaging.Agent
 )
+
+func init() {
+	agent = newAgent()
+	Agent = agent
+}
 
 type agentT struct {
 	state  *operationsT
@@ -23,17 +31,11 @@ type agentT struct {
 	emissary *messaging.Channel
 }
 
-func init() {
-	//exchange.RegisterConstructor(NamespaceName, func() messaging.Agent {
-	//	return newAgent()
-	//})
-}
-
 func newAgent() *agentT {
 	a := new(agentT)
 	a.agents = messaging.NewExchange()
-	//a.agents.Register(resource.NewAgent())
-	//a.agents.Register(namespace.NewAgent())
+	a.agents.Register(exec.NewAgent())
+	a.agents.Register(query.NewAgent())
 	agent = a
 
 	a.ticker = messaging.NewTicker(messaging.ChannelEmissary, duration)
