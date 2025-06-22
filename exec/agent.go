@@ -23,12 +23,19 @@ var (
 	cancelFn = func() {}
 )
 
+func init() {
+	NewAgent()
+}
+
 type agentT struct {
 	running bool
 	state   *private.Configuration
 }
 
 func NewAgent() messaging.Agent {
+	if agent != nil {
+		return agent
+	}
 	agent = newAgent()
 	return agent
 }

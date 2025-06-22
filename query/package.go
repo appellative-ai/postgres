@@ -15,7 +15,7 @@ func QueryT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, s
 	newCtx, cancel := agent.setTimeout(ctx)
 	defer cancel()
 
-	path, code, ok := common.QueryValues(h)
+	path, code, ok := queryValues(h)
 	start := time.Now().UTC()
 	if ok {
 		status = messaging.NewStatus(code, nil)

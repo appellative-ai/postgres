@@ -22,13 +22,14 @@ type CommandTag struct {
 func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, sql string, entries []T, args ...any) (CommandTag, *messaging.Status) {
 	newCtx, cancel := agent.setTimeout(ctx)
 	defer cancel()
-	tag, status, ok := processOverride(args)
+
+	count, status, ok := execValues(h)
 	req := newInsertRequest(resource, "", nil, args...)
 
 	start := time.Now().UTC()
 	if ok {
-		agent.log(start, time.Since(start), h, req, status.Code)
-		return tag, status
+		agent.log(start, time.Since(start), h, req, status)
+		return CommandTag{RowsAffected: int64(count), Insert: true}, messaging.NewStatus(status, nil)
 	}
 	/* TODO: determine how to bulk insert rows
 	rows, status1 := common.Rows[T](entries)
@@ -37,52 +38,41 @@ func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, 
 		return CommandTag{}, status1
 	}
 	*/
-	tag, status = agent.exec(newCtx, sql, args)
-	agent.log(start, time.Since(start), h, req, status.Code)
-	return tag, status
+	tag, status1 := agent.exec(newCtx, sql, args)
+	agent.log(start, time.Since(start), h, req, status1.Code)
+	return tag, status1
 }
 
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, sql string, args ...any) (CommandTag, *messaging.Status) {
 	newCtx, cancel := agent.setTimeout(ctx)
 	defer cancel()
-	tag, status, ok := processOverride(args)
-	req := newUpdateRequest(resource, "", nil, nil)
-	start := time.Now().UTC()
 
+	req := newUpdateRequest(resource, "", nil, nil)
+	count, status, ok := execValues(h)
+	start := time.Now().UTC()
 	if ok {
-		agent.log(start, time.Since(start), h, req, status.Code)
-		return tag, status
+		agent.log(start, time.Since(start), h, req, status)
+		return CommandTag{RowsAffected: int64(count), Update: true}, messaging.NewStatus(status, nil)
 	}
-	tag, status = agent.exec(newCtx, sql, args)
-	agent.log(start, time.Since(start), h, req, status.Code)
-	return tag, status
+	tag, status1 := agent.exec(newCtx, sql, args)
+	agent.log(start, time.Since(start), h, req, status1.Code)
+	return tag, status1
 }
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, sql string, args ...any) (CommandTag, *messaging.Status) {
 	newCtx, cancel := agent.setTimeout(ctx)
 	defer cancel()
-	tag, status, ok := processOverride(args)
+
+	count, status, ok := execValues(h)
 	req := newDeleteRequest(resource, "", nil, args...)
 	start := time.Now().UTC()
-
 	if ok {
-		agent.log(start, time.Since(start), h, req, status.Code)
-		return tag, status
+		agent.log(start, time.Since(start), h, req, status)
+		return CommandTag{RowsAffected: int64(count), Delete: true}, messaging.NewStatus(status, nil)
 	}
-	tag, status = agent.exec(newCtx, sql, args)
-	agent.log(start, time.Since(start), h, req, status.Code)
-	return tag, status
-}
-
-func processOverride(args []any) (CommandTag, *messaging.Status, bool) {
-	if len(args) == 0 {
-		return CommandTag{}, nil, false
-	}
-	if fn, ok1 := args[0].(func() (CommandTag, *messaging.Status)); ok1 {
-		tag, status := fn()
-		return tag, status, ok1
-	}
-	return CommandTag{}, nil, false
+	tag, status1 := agent.exec(newCtx, sql, args)
+	agent.log(start, time.Since(start), h, req, status1.Code)
+	return tag, status1
 }
