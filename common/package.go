@@ -7,18 +7,18 @@ import (
 )
 
 const (
-	LocationName = "location"
-	PathName2    = "path"
-	StatusName   = "status"
+	PostgresOverride = "x-postgres-override"
+	PathName2        = "path"
+	StatusName       = "status"
 )
 
-func LocationValues(h http.Header) (path string, status int, ok bool) {
+func QueryValues(h http.Header) (path string, status int, ok bool) {
 	if h == nil {
 		return
 	}
 	foundPath := false
 	foundStatus := false
-	for _, v := range h.Values(LocationName) {
+	for _, v := range h.Values(PostgresOverride) {
 		t := strings.Split(v, "=")
 		if len(t) != 2 {
 			continue

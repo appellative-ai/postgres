@@ -147,12 +147,12 @@ func ExampleQuery() {
 	r, status := QueryT[Entry](context.Background(), h, "timeseries", "")
 	fmt.Printf("test: Query() -> [count:%v] [status:%v]\n", len(r), status)
 
-	h.Add(common.LocationName, "status=418")
+	h.Add(common.PostgresOverride, "status=418")
 	r, status = QueryT[Entry](context.Background(), h, "timeseries", "")
 	fmt.Printf("test: Query() -> [count:%v] [status:%v]\n", len(r), status)
 
-	h.Del(common.LocationName)
-	h.Add(common.LocationName, "path="+EntriesPath)
+	h.Del(common.PostgresOverride)
+	h.Add(common.PostgresOverride, "path="+EntriesPath)
 	r, status = QueryT[Entry](context.Background(), h, "timeseries", "")
 	fmt.Printf("test: Query() -> [count:%v] [rows:%v] [status:%v]\n", len(r), r != nil, status)
 
