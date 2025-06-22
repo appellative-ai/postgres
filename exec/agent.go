@@ -2,6 +2,7 @@ package exec
 
 import (
 	"context"
+	"errors"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/private"
 	"net/http"
@@ -93,18 +94,19 @@ func (a *agentT) run() {
 
 func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag CommandTag, status *messaging.Status) {
 	// Transaction processing.
+	if a.state.DbClient == nil {
+		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("DbClient is nil"))
+	}
 	txn, err0 := a.state.DbClient.Begin(ctx)
 	if err0 != nil {
-		status = messaging.NewStatus(StatusTxnBeginError, err0)
-		return tag, status
+		return tag, messaging.NewStatus(StatusTxnBeginError, err0)
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
 	// the tx commits successfully, this is a no-op
 	defer txn.Rollback(ctx)
 	cmd, err := a.state.DbClient.Exec(ctx, sql, args)
 	if err != nil {
-		status = messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
-		return newCmdTag(cmd), status
+		return newCmdTag(cmd), messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 	}
 	err = txn.Commit(ctx)
 	if err != nil {
@@ -112,7 +114,7 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	} else {
 		status = messaging.StatusOK()
 	}
-	return newCmdTag(cmd), messaging.StatusOK()
+	return newCmdTag(cmd), status
 }
 
 func (a *agentT) statusCode(err error) int {

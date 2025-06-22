@@ -17,12 +17,12 @@ func ExampleExeValues() {
 	count, status, ok = execValues(h)
 	fmt.Printf("test: execValues() -> [count:%v] [status:%v] [ok:%v]\n", count, status, ok)
 
-	h.Set(common.PostgresOverride, rowCountName)
+	h.Set(common.PostgresOverride, countName)
 	count, status, ok = execValues(h)
 	fmt.Printf("test: execValues() -> [count:%v] [status:%v] [ok:%v]\n", count, status, ok)
 
 	h = make(http.Header)
-	h.Add(common.PostgresOverride, rowCountName+"="+"123")
+	h.Add(common.PostgresOverride, countName+"="+"123")
 	count, status, ok = execValues(h)
 	fmt.Printf("test: execValues() -> [count:%v] [status:%v] [ok:%v]\n", count, status, ok)
 
@@ -32,7 +32,7 @@ func ExampleExeValues() {
 	fmt.Printf("test: execValues() -> [count:%v] [status:%v] [ok:%v]\n", count, status, ok)
 
 	h = make(http.Header)
-	h.Add(common.PostgresOverride, rowCountName+"="+"456")
+	h.Add(common.PostgresOverride, countName+"="+"456")
 	h.Add(common.PostgresOverride, statusName+"="+"419")
 	count, status, ok = execValues(h)
 	fmt.Printf("test: execValues() -> [count:%v] [status:%v] [ok:%v]\n", count, status, ok)

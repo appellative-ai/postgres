@@ -20,11 +20,10 @@ const (
 	TrafficName   = "traffic"
 	CreatedTSName = "created_ts"
 
-	RegionName     = "region"
-	ZoneName       = "zone"
-	SubZoneName    = "sub_zone"
-	HostName       = "host"
-	InstanceIdName = "instance_id"
+	RegionName  = "region"
+	ZoneName    = "zone"
+	SubZoneName = "sub_zone"
+	HostName    = "host"
 
 	MethodName     = "method"
 	UrlName        = "url"
@@ -78,6 +77,8 @@ func (Entry) Scan(columnNames []string, values []any) (log Entry, err error) {
 		case HostName:
 			log.Host = values[i].(string)
 
+		case MethodName:
+			log.Method = values[i].(string)
 		case UrlName:
 			log.Url = values[i].(string)
 		case PathName:

@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	rowCountName = "row-count"
-	statusName   = "status"
+	countName  = "count"
+	statusName = "status"
 )
 
 func execValues(h http.Header) (count, status int, ok bool) {
@@ -23,7 +23,7 @@ func execValues(h http.Header) (count, status int, ok bool) {
 		if len(t) != 2 {
 			continue
 		}
-		if t[0] == rowCountName {
+		if t[0] == countName {
 			count, _ = strconv.Atoi(t[1])
 			countFound = true
 			continue
