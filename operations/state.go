@@ -2,13 +2,8 @@ package operations
 
 type operationsT struct {
 	running       bool
-	registryHost1 string // registry host name
-	registryHost2 string // registry host name
-	//collective        string
-	//domain            string
-	//serviceName       string
-	linkedCollectives map[string][]string
-	//origin            messaging.Origin
+	dbClient pgxpool.
+
 }
 
 // TODO: need to resolve all of the links in a collective and query the registry for the
@@ -16,6 +11,7 @@ type operationsT struct {
 //	host names for the collective
 //
 //	Need a default domain for metadata/links -> root??, import??
+/*
 func initialize(m map[string]string) (ops *operationsT) {
 	ops = new(operationsT)
 	ops.registryHost1 = m[RegistryHost1Key]
@@ -30,3 +26,6 @@ func initialize(m map[string]string) (ops *operationsT) {
 	//ops.serviceName = ops.collective + ":" + ops.origin.Name(ops.collective, ops.domain)
 	return
 }
+
+
+ */

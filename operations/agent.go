@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/exec"
+	"github.com/behavioral-ai/postgres/private"
 	"github.com/behavioral-ai/postgres/query"
 	"time"
 )
@@ -24,8 +25,9 @@ func init() {
 }
 
 type agentT struct {
-	state  *operationsT
-	agents *messaging.Exchange
+	running bool
+	state   *private.Configuration
+	agents  *messaging.Exchange
 
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -55,20 +57,20 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.state.running {
+	if !a.running {
 		if m.Name == messaging.ConfigEvent {
 			a.configure(m)
 			return
 		}
 		if m.Name == messaging.StartupEvent {
 			a.run()
-			a.state.running = true
+			a.running = true
 			return
 		}
 		return
 	}
 	if m.Name == messaging.ShutdownEvent {
-		a.state.running = false
+		a.running = false
 	}
 	switch m.Channel() {
 	case messaging.ChannelControl, messaging.ChannelEmissary:
