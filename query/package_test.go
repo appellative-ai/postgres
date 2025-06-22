@@ -1,11 +1,14 @@
 package query
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/behavioral-ai/core/iox"
 	json2 "github.com/behavioral-ai/core/json"
+	"github.com/behavioral-ai/postgres/common"
+	"net/http"
 	"time"
 )
 
@@ -121,7 +124,7 @@ func (Entry) Rows(events []Entry) [][]any {
 	return values
 }
 
-func ExampleEntry() {
+func _ExampleEntry() {
 	buf, err := json.Marshal(list)
 	fmt.Printf("test: json.Marshal() -> [buf:%v] [err:%v]\n", string(buf), err)
 
@@ -135,5 +138,27 @@ func ExampleEntry() {
 	//test: json.Marshal() -> [buf:[{"start-time":"2025-06-22T13:58:47.845875Z","duration":100,"traffic":"egress","created-ts":"2025-06-22T13:58:47.845875Z","region":"us-west","zone":"oregon","sub-zone":"dc1","host":"www.test-host.com","method":"GET","url":"https://www.google.com/search?q-golang","path":"/search","status-code":200,"route":"google-search"},{"start-time":"2025-06-22T13:58:47.845875Z","duration":100,"traffic":"egress","created-ts":"2025-06-22T13:58:47.845875Z","region":"us-central","zone":"iowa","sub-zone":"dc1","host":"localhost:8081","method":"GET","url":"http://localhost:8081/advanced-go/search:google?q-golang","path":"/search","status-code":200,"route":"search"}]] [err:<nil>]
 	//test: iox.ReadFile("file://[cwd]/querytest/entry.json") -> [err:<nil>]
 	//test: json2.New() -> [len:2] [err:<nil>]
+
+}
+
+func ExampleQuery() {
+	h := make(http.Header)
+
+	r, status := QueryT[Entry](context.Background(), h, "timeseries", "")
+	fmt.Printf("test: Query() -> [count:%v] [status:%v]\n", len(r), status)
+
+	h.Add(common.LocationName, "status=418")
+	r, status = QueryT[Entry](context.Background(), h, "timeseries", "")
+	fmt.Printf("test: Query() -> [count:%v] [status:%v]\n", len(r), status)
+
+	h.Del(common.LocationName)
+	h.Add(common.LocationName, "path="+EntriesPath)
+	r, status = QueryT[Entry](context.Background(), h, "timeseries", "")
+	fmt.Printf("test: Query() -> [count:%v] [rows:%v] [status:%v]\n", len(r), r != nil, status)
+
+	//Output:
+	//test: Query() -> [count:0] [status:Internal Error [DbClient is nil]]
+	//test: Query() -> [count:0] [status:I'm A Teapot]
+	//test: Query() -> [count:2] [rows:true] [status:OK]
 
 }

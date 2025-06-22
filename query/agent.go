@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"errors"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/private"
 	"github.com/jackc/pgx/v5"
@@ -19,12 +20,19 @@ var (
 	cancelFn = func() {}
 )
 
+func init() {
+	NewAgent()
+}
+
 type agentT struct {
 	running bool
 	state   *private.Configuration
 }
 
 func NewAgent() messaging.Agent {
+	if agent != nil {
+		return agent
+	}
 	agent = newAgent()
 	return agent
 }
@@ -81,21 +89,12 @@ func (a *agentT) run() {
 }
 
 func (a *agentT) query(ctx context.Context, sql string, args []any) (rows pgx.Rows, err error) {
-	//ctx = a.setTimeout(ctx)
+	if a.state.DbClient == nil {
+		return nil, errors.New("DbClient is nil")
+	}
 	return a.state.DbClient.Query(ctx, sql, args)
 }
 
-/*
-	func (a *agentT) setTimeout1(ctx context.Context) context.Context {
-		if ctx == nil {
-			return context.Background()
-		}
-		if d, ok := ctx.Deadline(); ok {
-			a.state.Until = time.Until(d)
-		}
-		return ctx
-	}
-*/
 func (a *agentT) statusCode(err error) int {
 	if err == nil {
 		return http.StatusOK
