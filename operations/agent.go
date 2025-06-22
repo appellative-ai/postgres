@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/exec"
-	"github.com/behavioral-ai/postgres/private"
 	"github.com/behavioral-ai/postgres/query"
 	"time"
 )
@@ -25,9 +24,8 @@ func init() {
 }
 
 type agentT struct {
-	running bool
-	state   *private.Configuration
-	agents  *messaging.Exchange
+	state  *operationsT
+	agents *messaging.Exchange
 
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -57,20 +55,20 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.running {
+	if !a.state.running {
 		if m.Name == messaging.ConfigEvent {
 			a.configure(m)
 			return
 		}
 		if m.Name == messaging.StartupEvent {
 			a.run()
-			a.running = true
+			a.state.running = true
 			return
 		}
 		return
 	}
 	if m.Name == messaging.ShutdownEvent {
-		a.running = false
+		a.state.running = false
 	}
 	switch m.Channel() {
 	case messaging.ChannelControl, messaging.ChannelEmissary:
@@ -93,17 +91,15 @@ func (a *agentT) emissaryFinalize() {
 func (a *agentT) configure(m *messaging.Message) {
 	switch m.ContentType() {
 	case messaging.ContentTypeMap:
-		cfg, status := messaging.MapContent(m)
-		if !status.OK() {
-			messaging.Reply(m, messaging.EmptyMapError(a.Name()), a.Name())
-			return
-		}
-		a.state = initialize(cfg)
-		// Initialize linked collectives
-		if messaging.Origin.Collective != "" {
-			// TODO: Initialize linked collectives by reading the configured collective links and then reference the
-			//       registry for collective host names
-		}
+		/*
+			cfg, status := messaging.MapContent(m)
+			if !status.OK() {
+				messaging.Reply(m, messaging.EmptyMapError(a.Name()), a.Name())
+				return
+			}
+
+		
+		*/
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }

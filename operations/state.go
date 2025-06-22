@@ -1,9 +1,17 @@
 package operations
 
-type operationsT struct {
-	running       bool
-	dbClient pgxpool.
+import (
+	"github.com/behavioral-ai/postgres/private"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
+)
 
+type operationsT struct {
+	running bool
+	timeout time.Duration
+	//Until    time.Duration
+	log      private.LogFunc
+	dbClient *pgxpool.Pool
 }
 
 // TODO: need to resolve all of the links in a collective and query the registry for the
@@ -28,4 +36,4 @@ func initialize(m map[string]string) (ops *operationsT) {
 }
 
 
- */
+*/
