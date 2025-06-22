@@ -15,12 +15,12 @@ func QueryT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, s
 	newCtx, cancel := agent.setTimeout(ctx)
 	defer cancel()
 
-	buf, status1, ok := processRedirect(args)
+	path, code, ok := common.LocationValues(h)
 	start := time.Now().UTC()
 	if ok {
-		status = status1
-		if len(buf) >= 0 {
-			rows, status = common.Unmarshal[T](buf)
+		status = messaging.NewStatus(code, nil)
+		if path != "" {
+			rows, status = common.Unmarshal[T](path)
 		}
 		agent.log(start, time.Since(start), h, newRequest(resource, "template"), status.Code)
 		return
@@ -34,6 +34,7 @@ func QueryT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, s
 	return common.Scan[T](pgxRows)
 }
 
+/*
 func processRedirect(args []any) ([]byte, *messaging.Status, bool) {
 	if len(args) == 0 {
 		return nil, nil, false
@@ -44,3 +45,6 @@ func processRedirect(args []any) ([]byte, *messaging.Status, bool) {
 	}
 	return nil, nil, false
 }
+
+
+*/
