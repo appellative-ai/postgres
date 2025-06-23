@@ -1,5 +1,10 @@
 package retrieval
 
+import (
+	"bytes"
+	"context"
+)
+
 type Rows interface {
 	Close()
 	Next() bool
@@ -8,6 +13,23 @@ type Rows interface {
 }
 
 type ScanFunc func(columnNames []string, values []any) error
+
+type Resolution struct {
+	Marshal func(ctx context.Context, resource, sql string, args ...any) (bytes.Buffer, error)
+	Scan    func(ctx context.Context, fn ScanFunc, resource, sql string, args ...any) error
+}
+
+// Relation -
+var Relation = func() *Resolution {
+	return &Resolution{
+		Marshal: func(ctx context.Context, resource, sql string, args ...any) (bytes.Buffer, error) {
+			return bytes.Buffer{}, nil
+		},
+		Scan: func(ctx context.Context, fn ScanFunc, resource, sql string, args ...any) error {
+			return nil
+		},
+	}
+}()
 
 /*
 
