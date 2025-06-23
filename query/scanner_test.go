@@ -30,8 +30,9 @@ const (
 )
 
 type entryRows struct {
-	index int
-	rows  []Entry
+	index  int
+	rows   []Entry
+	result []Entry
 }
 
 func newEntryRows(entries []Entry) *entryRows {
@@ -70,7 +71,7 @@ func (e *entryRows) Values() (result []any, err error) {
 	return
 }
 
-func scanEntry(columnNames []string, values []any) (Entry, error) {
+func (e *entryRows) scan(columnNames []string, values []any) error {
 	entry := Entry{}
 	for i, name := range columnNames {
 		switch name {
@@ -103,10 +104,11 @@ func scanEntry(columnNames []string, values []any) (Entry, error) {
 		case RouteName:
 			entry.Route = values[i].(string)
 		default:
-			return Entry{}, errors.New(fmt.Sprintf("invalid field name: %v", name))
+			return errors.New(fmt.Sprintf("invalid field name: %v", name))
 		}
 	}
-	return entry, nil
+	e.result = append(e.result, entry)
+	return nil
 }
 
 var (
@@ -140,22 +142,13 @@ type Entry struct {
 	Route      string `json:"route"`
 }
 
-func ExampleScan() {
-	var result []Entry
+func ExampleScanner() {
 	rows := newEntryRows(list)
-	err := scan(func(columnNames []string, values []any) error {
-		entry, err := scanEntry(columnNames, values)
-		if err != nil {
-			return err
-		}
-		result = append(result, entry)
-		return nil
-	}, columnNames, rows)
-
-	fmt.Printf("test: scan() -> [%v] [count:%v] [err:%v]\n", result != nil, len(result), err)
+	err := Scanner(rows.scan, columnNames, rows)
+	fmt.Printf("test: Scanner() -> [%v] [count:%v] [err:%v]\n", nil, len(rows.result), err)
 
 	//Output:
-	//test: scan() -> [true] [count:2] [err:<nil>]
+	//test: scan() -> [<nil>] [count:2] [err:<nil>]
 
 }
 
@@ -175,3 +168,15 @@ func _ExampleMarshal() {
 	//test: json2.New() -> [len:2] [err:<nil>]
 
 }
+
+/*
+	err := Scanner(func(columnNames []string, values []any) error {
+		entry, err := scanEntry(columnNames, values)
+		if err != nil {
+			return err
+		}
+		result = append(result, entry)
+		return nil
+	}, columnNames, rows)
+
+*/

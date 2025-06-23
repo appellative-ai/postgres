@@ -4,8 +4,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-// Scan - function for scanning rows
-func scan(fn ScanFunc, columnNames []string, rows Rows) error {
+// Scanner - function for scanning rows
+func Scanner(fn ScanFunc, columnNames []string, rows Rows) error {
 	if rows == nil || len(columnNames) == 0 {
 		return nil
 	}

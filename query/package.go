@@ -40,7 +40,7 @@ func Scan(ctx context.Context, fn ScanFunc, resource, sql string, args ...any) e
 	if err != nil {
 		return err
 	}
-	return scan(fn, createColumnNames(rows.FieldDescriptions()), rows)
+	return Scanner(fn, createColumnNames(rows.FieldDescriptions()), rows)
 }
 
 /*
