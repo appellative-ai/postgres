@@ -14,7 +14,7 @@ const (
 	protocol       = "message-based"
 	postgresScheme = "postgres"
 	queryRoot      = "retrieval"
-	execRoot       = "exec"
+	execRoot       = "request"
 	pingRoot       = "ping"
 
 	selectMethod = "select"

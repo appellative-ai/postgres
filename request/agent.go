@@ -1,4 +1,4 @@
-package exec
+package request
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	NamespaceName          = "sql:postgres:agent/exec"
+	NamespaceName          = "sql:postgres:agent/request"
 	defaultDuration        = time.Second * 3
 	StatusTxnBeginError    = int(102) // Transaction processing begin error
 	StatusTxnRollbackError = int(103) // Transaction processing rollback error
@@ -92,7 +92,7 @@ func (a *agentT) configure(m *messaging.Message) {
 func (a *agentT) run() {
 }
 
-func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag CommandTag, status *messaging.Status) {
+func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Response, status *messaging.Status) {
 	// Transaction processing.
 	if a.state.DbClient == nil {
 		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("DbClient is nil"))
@@ -106,7 +106,7 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	defer txn.Rollback(ctx)
 	cmd, err := a.state.DbClient.Exec(ctx, sql, args)
 	if err != nil {
-		return newCmdTag(cmd), messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
+		return newResponse(cmd), messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 	}
 	err = txn.Commit(ctx)
 	if err != nil {
@@ -114,7 +114,7 @@ func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Command
 	} else {
 		status = messaging.StatusOK()
 	}
-	return newCmdTag(cmd), status
+	return newResponse(cmd), status
 }
 
 func (a *agentT) statusCode(err error) int {
@@ -139,16 +139,13 @@ func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
 
 }
 
-func (a *agentT) log(start time.Time, duration time.Duration, h http.Header, req *request, statusCode int) {
+func (a *agentT) log(start time.Time, duration time.Duration, req *request, statusCode int) {
 	if a.state.Log == nil {
 		return
 	}
 
-	resp := newResponse(statusCode, nil)
-	// TODO: determine how to set timeout from error
-	if h != nil && h.Get(private.ThresholdRequest) != "" {
-		// TODO : set the
-		resp.Header().Set(private.ThresholdTimeoutName, "")
-	}
+	resp := newLogResponse(statusCode)
+	//TODO: Add timeout value for threshold header
+	resp.Header().Set(private.ThresholdTimeoutName, "")
 	a.state.Log(private.TrafficEgress, start, duration, req.routeName, req, resp)
 }

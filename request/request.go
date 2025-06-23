@@ -1,4 +1,4 @@
-package exec
+package request
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ const (
 	protocol       = "message-based"
 	postgresScheme = "postgres"
 	queryRoot      = "retrieval"
-	execRoot       = "exec"
+	execRoot       = "request"
 	pingRoot       = "ping"
 
 	selectMethod = "select"

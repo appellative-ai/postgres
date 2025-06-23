@@ -29,7 +29,7 @@ var Relation = func() *Resolution {
 
 			start := time.Now().UTC()
 			rows, err := agent.query(newCtx, sql, args)
-			agent.log(start, time.Since(start), nil, newRequest(resource, "template"), agent.statusCode(err))
+			agent.log(start, time.Since(start), newRequest(resource, "template"), agent.statusCode(err))
 			if err != nil {
 				return bytes.Buffer{}, err
 			}
@@ -41,7 +41,7 @@ var Relation = func() *Resolution {
 
 			start := time.Now().UTC()
 			rows, err := agent.query(newCtx, sql, args)
-			agent.log(start, time.Since(start), nil, newRequest(resource, "template"), agent.statusCode(err))
+			agent.log(start, time.Since(start), newRequest(resource, "template"), agent.statusCode(err))
 			if err != nil {
 				return err
 			}

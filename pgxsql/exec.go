@@ -17,10 +17,10 @@ const (
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status *messaging.Status) {
 	if req == nil {
-		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
+		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL request call : request is nil"))
 	}
 	if dbClient == nil {
-		status = messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL request call : dbClient is nil"))
 		return
 	}
 	ctx = req.setTimeout(ctx)

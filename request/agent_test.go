@@ -1,4 +1,4 @@
-package exec
+package request
 
 import "fmt"
 
@@ -8,6 +8,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: newAgent() -> [%v]\n", a)
 
 	//Output:
-	//test: newAgent() -> [sql:postgres:agent/exec]
+	//test: newAgent() -> [sql:postgres:agent/request]
 
 }

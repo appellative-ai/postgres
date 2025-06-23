@@ -3,7 +3,6 @@ package operations
 import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/exec"
 	"time"
 )
 
@@ -33,7 +32,7 @@ type agentT struct {
 func newAgent() *agentT {
 	a := new(agentT)
 	a.agents = messaging.NewExchange()
-	a.agents.Register(exec.NewAgent())
+	a.agents.Register(request.NewAgent())
 	a.agents.Register(retrieval.NewAgent())
 	agent = a
 

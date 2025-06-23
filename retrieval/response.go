@@ -7,14 +7,10 @@ type response struct {
 	header     http.Header
 }
 
-func newResponse(statusCode int, h http.Header) *response {
+func newResponse(statusCode int) *response {
 	r := new(response)
 	r.statusCode = statusCode
-	if h == nil {
-		r.header = make(http.Header)
-	} else {
-		r.header = h
-	}
+	r.header = make(http.Header)
 	return r
 }
 

@@ -117,16 +117,13 @@ func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
 
 }
 
-func (a *agentT) log(start time.Time, duration time.Duration, h http.Header, req *request, statusCode int) {
+func (a *agentT) log(start time.Time, duration time.Duration, req *request, statusCode int) {
 	if a.state.Log == nil {
 		return
 	}
 
-	resp := newResponse(statusCode, nil)
-	// TODO: determine how to set timeout from error
-	if h != nil && h.Get(private.ThresholdRequest) != "" {
-		// TODO : set the
-		resp.Header().Set(private.ThresholdTimeoutName, "")
-	}
+	resp := newResponse(statusCode)
+	// TODO : set timeout value for the threshold header
+	resp.Header().Set(private.ThresholdTimeoutName, "")
 	a.state.Log(private.TrafficEgress, start, duration, req.routeName, req, resp)
 }
