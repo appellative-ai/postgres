@@ -10,10 +10,10 @@ import (
 // Query - function for a Query
 func query(ctx context.Context, req *request) (rows pgx.Rows, status *messaging.Status) {
 	if req == nil {
-		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL database query call : request is nil"))
+		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL database retrieval call : request is nil"))
 	}
 	if dbClient == nil {
-		status = messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
+		status = messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL database retrieval call: dbClient is nil"))
 		return
 	}
 	var err error

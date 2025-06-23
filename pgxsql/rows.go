@@ -33,7 +33,7 @@ type Rows2 interface {
 	// Err returns any error that occurred while reading.
 	Err() error
 
-	// CommandTag returns the command tag from this query. It is only available after Rows is closed.
+	// CommandTag returns the command tag from this retrieval. It is only available after Rows is closed.
 	CommandTag() CommandTag2
 
 	FieldDescriptions() []FieldDescription2

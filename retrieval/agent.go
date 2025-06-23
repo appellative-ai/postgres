@@ -1,4 +1,4 @@
-package query
+package retrieval
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	NamespaceName   = "sql:postgres:agent/query"
+	NamespaceName   = "sql:postgres:agent/retrieval"
 	defaultDuration = time.Second * 3
 )
 

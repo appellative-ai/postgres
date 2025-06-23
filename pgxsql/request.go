@@ -13,7 +13,7 @@ import (
 const (
 	protocol       = "message-based"
 	postgresScheme = "postgres"
-	queryRoot      = "query"
+	queryRoot      = "retrieval"
 	execRoot       = "exec"
 	pingRoot       = "ping"
 

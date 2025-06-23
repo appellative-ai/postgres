@@ -1,4 +1,4 @@
-package query
+package retrieval
 
 import "fmt"
 
@@ -8,6 +8,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: newAgent() -> [%v]\n", a)
 
 	//Output:
-	//test: newAgent() -> [sql:postgres:agent/query]
+	//test: newAgent() -> [sql:postgres:agent/retrieval]
 
 }

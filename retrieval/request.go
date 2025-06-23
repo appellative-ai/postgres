@@ -1,4 +1,4 @@
-package query
+package retrieval
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 const (
 	protocol       = "message-based"
 	postgresScheme = "postgres"
-	queryRoot      = "query"
-	queryRouteName = "postgresql-query"
+	queryRoot      = "retrieval"
+	queryRouteName = "postgresql-retrieval"
 	selectMethod   = "select"
 )
 
@@ -69,7 +69,7 @@ func buildQueryUri(resource string) string {
 	return buildUri(queryRoot, resource)
 }
 
-// BuildWhere - build the []Attr based on the URL query parameters
+// BuildWhere - build the []Attr based on the URL retrieval parameters
 func buildWhere(values map[string][]string) []Attr {
 	if len(values) == 0 {
 		return nil

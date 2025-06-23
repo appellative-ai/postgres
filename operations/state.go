@@ -14,7 +14,7 @@ type operationsT struct {
 	dbClient *pgxpool.Pool
 }
 
-// TODO: need to resolve all of the links in a collective and query the registry for the
+// TODO: need to resolve all of the links in a collective and retrieval the registry for the
 //
 //	host names for the collective
 //

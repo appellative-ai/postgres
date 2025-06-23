@@ -13,7 +13,7 @@ func emissaryAttend(a *agentT) {
 	for {
 		select {
 		case <-a.ticker.C():
-			// TODO: query collective for new messages and advice
+			// TODO: retrieval collective for new messages and advice
 		default:
 		}
 		select {

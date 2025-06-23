@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// BuildWhere - build the []Attr based on the URL query parameters
+// BuildWhere - build the []Attr based on the URL retrieval parameters
 func BuildWhere(values map[string][]string) []Attr {
 	if len(values) == 0 {
 		return nil

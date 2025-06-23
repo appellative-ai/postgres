@@ -31,7 +31,7 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, sql stri
 		agent.log(start, time.Since(start), h, newRequest(resource, "template"), status.Code)
 		return
 	}
-	pgxRows, err := agent.query(newCtx, sql, args)
+	pgxRows, err := agent.retrieval(newCtx, sql, args)
 	statusCode := agent.statusCode(err)
 	agent.log(start, time.Since(start), h, newRequest(resource, "template"), statusCode)
 	if err != nil {

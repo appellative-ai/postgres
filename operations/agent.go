@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/postgres/exec"
-	"github.com/behavioral-ai/postgres/query"
 	"time"
 )
 
@@ -35,7 +34,7 @@ func newAgent() *agentT {
 	a := new(agentT)
 	a.agents = messaging.NewExchange()
 	a.agents.Register(exec.NewAgent())
-	a.agents.Register(query.NewAgent())
+	a.agents.Register(retrieval.NewAgent())
 	agent = a
 
 	a.ticker = messaging.NewTicker(messaging.ChannelEmissary, duration)

@@ -26,12 +26,12 @@ func ExampleBuildRequest() {
 
 	//Output:
 	//test: buildInsertUri(test-test.dev) -> postgres://host-name/github/behavioral-ai/postgres:database-name/exec/test-test.dev
-	//test: buildQueryUri(test-test.prod) -> postgres://host-name/github/behavioral-ai/postgres:database-name/query/test-test.prod
+	//test: buildQueryUri(test-test.prod) -> postgres://host-name/github/behavioral-ai/postgres:database-name/retrieval/test-test.prod
 
 }
 
 func ExampleRequest_Validate() {
-	uri := "urn:postgres:query.test"
+	uri := "urn:postgres:retrieval.test"
 	sql := "select * from table"
 	req := request{}
 
@@ -70,7 +70,7 @@ func ExampleRequest_Validate() {
 
 	//Output:
 	//test: Validate(empty) -> invalid argument: request Uri is empty
-	//test: Validate(urn:postgres:query.test) -> invalid argument: request template is empty
+	//test: Validate(urn:postgres:retrieval.test) -> invalid argument: request template is empty
 	//test: Validate(select * from table) -> invalid argument: request Uri is empty
 	//test: Validate(all) -> <nil>
 

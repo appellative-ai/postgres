@@ -16,7 +16,7 @@ const (
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"
 
-	QueryRouteName  = "postgresql-query"
+	QueryRouteName  = "postgresql-retrieval"
 	InsertRouteName = "postgresql-insert"
 	UpdateRouteName = "postgresql-update"
 	DeleteRouteName = "postgresql-delete"

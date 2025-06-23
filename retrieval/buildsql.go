@@ -1,4 +1,4 @@
-package query
+package retrieval
 
 /*
 func buildSql(r *request) string {
