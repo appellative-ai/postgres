@@ -2,7 +2,6 @@ package query
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/postgres/common"
 	"net/http"
 )
 
@@ -11,31 +10,16 @@ const (
 	postgresScheme = "postgres"
 	queryRoot      = "query"
 	queryRouteName = "postgresql-query"
-
-	//execRoot       = "exec"
-	//pingRoot       = "ping"
-
-	selectMethod = "select"
-	//insertMethod = "insert"
-	//updateMethod = "update"
-	//deleteMethod = "delete"
-	//pingMethod   = "ping"
-
-	//selectCmd = 0
-	//insertCmd = 1
-	//updateCmd = 2
-	//deleteCmd = 3
-	//pingCmd   = 4
-
-	//nullExpectedCount = int64(-1)
+	selectMethod   = "select"
 )
+
+type Attr struct {
+	Key string
+	Val any
+}
 
 // Request - contains data needed to build the SQL statement related to the uri
 type request struct {
-	//expectedCount int64
-	//cmd           int
-	//duration      time.Duration
-
 	resource  string
 	template  string
 	uri       string
@@ -43,8 +27,8 @@ type request struct {
 
 	values  [][]any
 	values2 map[string][]string
-	attrs   []common.Attr
-	where   []common.Attr
+	attrs   []Attr
+	where   []Attr
 	args    []any
 	error   error
 	h       http.Header
@@ -86,13 +70,13 @@ func buildQueryUri(resource string) string {
 }
 
 // BuildWhere - build the []Attr based on the URL query parameters
-func buildWhere(values map[string][]string) []common.Attr {
+func buildWhere(values map[string][]string) []Attr {
 	if len(values) == 0 {
 		return nil
 	}
-	var where []common.Attr
+	var where []Attr
 	for k, v := range values {
-		where = append(where, common.Attr{Key: k, Val: v[0]})
+		where = append(where, Attr{Key: k, Val: v[0]})
 	}
 	return where
 }

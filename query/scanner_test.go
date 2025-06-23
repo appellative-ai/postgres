@@ -29,50 +29,52 @@ const (
 	RouteName      = "route"
 )
 
-type entryRows struct {
+type testRows struct {
 	index  int
-	rows   []Entry
-	result []Entry
+	rows   []testEntry
+	result []testEntry
 }
 
-func newEntryRows(entries []Entry) *entryRows {
-	e := new(entryRows)
-	e.rows = append(e.rows, entries...)
+func newTestRows(entries []testEntry) *testRows {
+	e := new(testRows)
+	if len(entries) > 0 {
+		e.rows = append(e.rows, entries...)
+	}
 	e.index = -1
 	return e
 }
 
-func (e *entryRows) Close()     {}
-func (e *entryRows) Err() error { return nil }
-func (e *entryRows) Next() bool {
-	if len(e.rows) == 0 || (e.index+1) >= len(e.rows) {
+func (t *testRows) Close()     {}
+func (t *testRows) Err() error { return nil }
+func (t *testRows) Next() bool {
+	if len(t.rows) == 0 || (t.index+1) >= len(t.rows) {
 		return false
 	}
-	e.index++
+	t.index++
 	return true
 }
 
-func (e *entryRows) Values() (result []any, err error) {
-	result = append(result, e.rows[e.index].StartTime)
-	result = append(result, e.rows[e.index].Duration)  //int64     `json:"duration"`
-	result = append(result, e.rows[e.index].Traffic)   //string    `json:"traffic"`
-	result = append(result, e.rows[e.index].CreatedTS) //time.Time `json:"created-ts"`
+func (t *testRows) Values() (result []any, err error) {
+	result = append(result, t.rows[t.index].StartTime)
+	result = append(result, t.rows[t.index].Duration)  //int64     `json:"duration"`
+	result = append(result, t.rows[t.index].Traffic)   //string    `json:"traffic"`
+	result = append(result, t.rows[t.index].CreatedTS) //time.Time `json:"created-ts"`
 
-	result = append(result, e.rows[e.index].Region)  //string `json:"region"`
-	result = append(result, e.rows[e.index].Zone)    //string `json:"zone"`
-	result = append(result, e.rows[e.index].SubZone) //string `json:"sub-zone"`
-	result = append(result, e.rows[e.index].Host)    //string `json:"host"`
+	result = append(result, t.rows[t.index].Region)  //string `json:"region"`
+	result = append(result, t.rows[t.index].Zone)    //string `json:"zone"`
+	result = append(result, t.rows[t.index].SubZone) //string `json:"sub-zone"`
+	result = append(result, t.rows[t.index].Host)    //string `json:"host"`
 
-	result = append(result, e.rows[e.index].Method)     //string `json:"method"`
-	result = append(result, e.rows[e.index].Url)        //string `json:"url"`
-	result = append(result, e.rows[e.index].Path)       //string `json:"path"`
-	result = append(result, e.rows[e.index].StatusCode) //int32  `json:"status-code"`
-	result = append(result, e.rows[e.index].Route)      //string `json:"route"`
+	result = append(result, t.rows[t.index].Method)     //string `json:"method"`
+	result = append(result, t.rows[t.index].Url)        //string `json:"url"`
+	result = append(result, t.rows[t.index].Path)       //string `json:"path"`
+	result = append(result, t.rows[t.index].StatusCode) //int32  `json:"status-code"`
+	result = append(result, t.rows[t.index].Route)      //string `json:"route"`
 	return
 }
 
-func (e *entryRows) scan(columnNames []string, values []any) error {
-	entry := Entry{}
+func (t *testRows) scan(columnNames []string, values []any) error {
+	entry := testEntry{}
 	for i, name := range columnNames {
 		switch name {
 		case StartTimeName:
@@ -107,12 +109,12 @@ func (e *entryRows) scan(columnNames []string, values []any) error {
 			return errors.New(fmt.Sprintf("invalid field name: %v", name))
 		}
 	}
-	e.result = append(e.result, entry)
+	t.result = append(t.result, entry)
 	return nil
 }
 
 var (
-	list = []Entry{
+	entries = []testEntry{
 		{time.Now().UTC(), 100, "egress", time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "GET", "https://www.google.com/search?q-golang", "/search", 200, "google-search"},
 		{time.Now().UTC(), 100, "egress", time.Now().UTC(), "us-central", "iowa", "dc1", "localhost:8081", "GET", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "search"},
 	}
@@ -123,8 +125,8 @@ var (
 	}
 )
 
-// Entry - timeseries access log struct
-type Entry struct {
+// testEntry - timeseries access log struct
+type testEntry struct {
 	StartTime time.Time `json:"start-time"`
 	Duration  int64     `json:"duration"`
 	Traffic   string    `json:"traffic"`
@@ -143,23 +145,23 @@ type Entry struct {
 }
 
 func ExampleScanner() {
-	rows := newEntryRows(list)
+	rows := newTestRows(entries)
 	err := Scanner(rows.scan, columnNames, rows)
 	fmt.Printf("test: Scanner() -> [%v] [count:%v] [err:%v]\n", nil, len(rows.result), err)
 
 	//Output:
-	//test: scan() -> [<nil>] [count:2] [err:<nil>]
+	//test: Scanner() -> [<nil>] [count:2] [err:<nil>]
 
 }
 
 func _ExampleMarshal() {
-	buf, err := json.Marshal(list)
+	buf, err := json.Marshal(entries)
 	fmt.Printf("test: json.Marshal() -> [buf:%v] [err:%v]\n", string(buf), err)
 
 	buf, err = iox.ReadFile(EntriesPath)
 	fmt.Printf("test: iox.ReadFile(\"%v\") -> [err:%v]\n", EntriesPath, err)
 
-	list2, err2 := json2.New[[]Entry](EntriesPath, nil)
+	list2, err2 := json2.New[[]testEntry](EntriesPath, nil)
 	fmt.Printf("test: json2.New() -> [len:%v] [err:%v]\n", len(list2), err2)
 
 	//Output:

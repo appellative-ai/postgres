@@ -1,10 +1,4 @@
-package query
-
-import (
-	"bytes"
-	"context"
-	"time"
-)
+package retrieval
 
 type Rows interface {
 	Close()
@@ -14,6 +8,8 @@ type Rows interface {
 }
 
 type ScanFunc func(columnNames []string, values []any) error
+
+/*
 
 // Marshal -  process a SQL select statement, returning a JSON buffer
 func Marshal(ctx context.Context, resource, sql string, args ...any) (bytes.Buffer, error) {
@@ -43,6 +39,8 @@ func Scan(ctx context.Context, fn ScanFunc, resource, sql string, args ...any) e
 	return Scanner(fn, createColumnNames(rows.FieldDescriptions()), rows)
 }
 
+
+*/
 /*
 // QueryT -  process a SQL select statement, returning a typed array
 func QueryT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, sql string, args ...any) (rows []T, err error) {

@@ -1,13 +1,20 @@
 package query
 
 import (
+	"errors"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // Scanner - function for scanning rows
 func Scanner(fn ScanFunc, columnNames []string, rows Rows) error {
-	if rows == nil || len(columnNames) == 0 {
-		return nil
+	if fn == nil {
+		return errors.New("scanner ScanFunc is nil")
+	}
+	if len(columnNames) == 0 {
+		return errors.New("list of column names is empty")
+	}
+	if rows == nil {
+		return errors.New("rows list is empty")
 	}
 	var err error
 	var values []any
