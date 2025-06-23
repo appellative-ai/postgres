@@ -40,9 +40,9 @@ func Rows[T Scanner[T]](entries []T) ([][]any, *messaging.Status) {
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *messaging.Status) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
 	if rows == nil || rows.CommandTag().RowsAffected() == 0 {
-		return nil, messaging.StatusNotFound() //messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
+		return nil, nil //messaging.StatusNotFound() //messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
 	}
 	var s T
 	var t []T
@@ -54,24 +54,24 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *messaging.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
+			return t, err
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
+			return t, err
 		}
 		val, err1 := s.Scan(names, values)
 		if err1 != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err1)
+			return t, err1
 		}
 		t = append(t, val)
 		// Test this
 		//rows.Close()
 	}
-	if len(t) == 0 {
-		return t, messaging.StatusNotFound()
-	}
-	return t, messaging.StatusOK()
+	//if len(t) == 0 {
+	//	return t, nil
+	//}
+	return t, nil
 }
 
 func createColumnNames(fields []pgconn.FieldDescription) []string {

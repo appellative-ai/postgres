@@ -98,7 +98,7 @@ func (a *agentT) configure(m *messaging.Message) {
 				return
 			}
 
-		
+
 		*/
 	}
 	messaging.Reply(m, messaging.StatusOK(), a.Name())

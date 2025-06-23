@@ -16,7 +16,7 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, sql stri
 		}
 		fmt.Printf("test: Query() -> [variant:%v]\n", ok)
 	}
-	rows, status = Scan[T](nil)
+	rows, _ = Scan[T](nil)
 	return
 }
 

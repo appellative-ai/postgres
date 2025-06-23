@@ -3,11 +3,12 @@ package pgxsql
 import (
 	"context"
 	"fmt"
-	"github.com/behavioral-ai/postgres/module"
 	"github.com/behavioral-ai/postgres/pgxdml"
 	"net/http"
 	"time"
 )
+
+// DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name} + {root}/{resource}
 
 const (
 	protocol       = "message-based"
@@ -104,7 +105,7 @@ func (r *request) setTimeout(ctx context.Context) context.Context {
 }
 
 func buildUri(root, resource string) string {
-	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", module.Domain, "database-name", root, resource)
+	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", "domain", "database-name", root, resource)
 	//originUrn(nid, nss, test) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, test)
 }
 
