@@ -74,19 +74,52 @@ func writeValue(buf *bytes.Buffer, name string, v any) {
 		//fmt.Printf(s)
 		buf.WriteString(s)
 	case reflect.Struct:
-		s := ""
-		if ts, ok := v.(time.Time); ok {
-			s = fmt.Sprintf(textFmt, name, fmtx.FmtRFC3339Millis(ts))
-		} else {
-			s = fmt.Sprintf(nonTextFmt, name, v)
-		}
-		//fmt.Printf(s)
-		buf.WriteString(s)
+		writeStruct(buf, name, v)
+		//s := ""
+		//if ts, ok := v.(time.Time); ok {
+		//	s = fmt.Sprintf(textFmt, name, fmtx.FmtRFC3339Millis(ts))
+		//} else {
+		//	s = fmt.Sprintf(nonTextFmt, name, v)
+	//	}
+	//fmt.Printf(s)
+	//buf.WriteString(s)
 	default:
 		s := fmt.Sprintf(nonTextFmt, name, v)
 		//fmt.Printf(s)
 		buf.WriteString(s)
 	}
+}
+
+func writeStruct(buf *bytes.Buffer, name string, v any) {
+	s := ""
+	if ts, ok := v.(time.Time); ok {
+		s = fmt.Sprintf(textFmt, name, fmtx.FmtRFC3339Millis(ts))
+		buf.WriteString(s)
+		return
+	}
+	rt := reflect.TypeOf(v)
+	vt := reflect.ValueOf(v)
+	s = fmt.Sprintf("\"%v\": {\n", name)
+	//fmt.Printf(s)
+	buf.WriteString(s)
+	for i := 0; i < rt.NumField(); i++ {
+		if i > 0 {
+			//fmt.Printf(",\n")
+			buf.WriteString(endOfLine)
+		}
+		f := rt.Field(i)
+
+		s = fmt.Sprintf(textFmt, tagName(f), vt.Field(i))
+		//fmt.Printf(s)
+		buf.WriteString(s)
+	}
+	//fmt.Printf("\n}\n")
+	buf.WriteString(objectEnd)
+}
+
+func tagName(f reflect.StructField) string {
+	tag := f.Tag.Get("json")
+	return tag
 }
 
 func columnName(i int, names []string, v any) string {
