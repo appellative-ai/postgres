@@ -142,6 +142,7 @@ var (
 type testOrigin struct {
 	Region string `json:"region"`
 	Zone   string `json:"zone"`
+	Count  int    `json:"count"`
 }
 
 // testEntry - timeseries access log struct
