@@ -62,22 +62,30 @@ func writeValues(buf *bytes.Buffer, columnNames []string, values []any) {
 			//fmt.Printf(",")
 			buf.WriteString(endOfLine)
 		}
-		t := reflect.TypeOf(v)
-		switch t.Kind() {
-		case reflect.String:
-			s := fmt.Sprintf(textFmt, columnName(i, columnNames, v), v)
-			//fmt.Printf(s)
-			buf.WriteString(s)
-		default:
-			s := ""
-			if ts, ok := v.(time.Time); ok {
-				s = fmt.Sprintf(textFmt, columnName(i, columnNames, v), fmtx.FmtRFC3339Millis(ts))
-			} else {
-				s = fmt.Sprintf(nonTextFmt, columnName(i, columnNames, v), v)
-			}
-			//fmt.Printf(s)
-			buf.WriteString(s)
+		writeValue(buf, columnName(i, columnNames, v), v)
+	}
+}
+
+func writeValue(buf *bytes.Buffer, name string, v any) {
+	t := reflect.TypeOf(v)
+	switch t.Kind() {
+	case reflect.String:
+		s := fmt.Sprintf(textFmt, name, v)
+		//fmt.Printf(s)
+		buf.WriteString(s)
+	case reflect.Struct:
+		s := ""
+		if ts, ok := v.(time.Time); ok {
+			s = fmt.Sprintf(textFmt, name, fmtx.FmtRFC3339Millis(ts))
+		} else {
+			s = fmt.Sprintf(nonTextFmt, name, v)
 		}
+		//fmt.Printf(s)
+		buf.WriteString(s)
+	default:
+		s := fmt.Sprintf(nonTextFmt, name, v)
+		//fmt.Printf(s)
+		buf.WriteString(s)
 	}
 }
 

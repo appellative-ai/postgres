@@ -28,7 +28,7 @@ func ExampleMarshaler() {
 
 	buf, err := Marshaler(columnNames, newTestRows(entries))
 	json.Indent(&bytes, buf.Bytes(), "", "")
-	fmt.Printf("test: Marshaler() %v [%v]\n", bytes.String(), err)
+	fmt.Printf("test: Marshaler() %v [%v]\n", buf.String(), err)
 
 	buf, err = Marshaler(columnNames[:len(columnNames)-2], newTestRows(entries))
 	json.Indent(&bytes, buf.Bytes(), "", "")

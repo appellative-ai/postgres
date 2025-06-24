@@ -17,6 +17,7 @@ const (
 	TrafficName   = "traffic"
 	CreatedTSName = "created_ts"
 
+	OriginName  = "origin"
 	RegionName  = "region"
 	ZoneName    = "zone"
 	SubZoneName = "sub_zone"
@@ -60,8 +61,8 @@ func (t *testRows) Values() (result []any, err error) {
 	result = append(result, t.rows[t.index].Traffic)   //string    `json:"traffic"`
 	result = append(result, t.rows[t.index].CreatedTS) //time.Time `json:"created-ts"`
 
-	result = append(result, t.rows[t.index].Region)  //string `json:"region"`
-	result = append(result, t.rows[t.index].Zone)    //string `json:"zone"`
+	result = append(result, t.rows[t.index].Origin) //string `json:"region"`
+	//result = append(result, t.rows[t.index].Zone)    //string `json:"zone"`
 	result = append(result, t.rows[t.index].SubZone) //string `json:"sub-zone"`
 	result = append(result, t.rows[t.index].Host)    //string `json:"host"`
 
@@ -86,10 +87,17 @@ func (t *testRows) scan(columnNames []string, values []any) error {
 		case CreatedTSName:
 			entry.CreatedTS = values[i].(time.Time)
 
-		case RegionName:
-			entry.Region = values[i].(string)
-		case ZoneName:
-			entry.Zone = values[i].(string)
+		case OriginName:
+			o := values[i].(testOrigin)
+			entry.Origin.Region = o.Region //values[i].(string)
+			entry.Origin.Zone = o.Zone
+			/*
+				case RegionName:
+					entry.Origin.Region = values[i].(string)
+				case ZoneName:
+					entry.Origin.Zone = values[i].(string)
+
+			*/
 		case SubZoneName:
 			entry.SubZone = values[i].(string)
 		case HostName:
@@ -115,15 +123,26 @@ func (t *testRows) scan(columnNames []string, values []any) error {
 
 var (
 	entries = []testEntry{
-		{time.Now().UTC(), 100, "egr,,ess", time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "GET", "https://www.google.com/search?q-golang", "/search", 200, "google-search"},
-		{time.Now().UTC(), 100, "egress,", time.Now().UTC(), "us-central", "iowa", "dc1", "localhost:8081", "GET", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "search"},
+		{time.Now().UTC(), 100, "egr,,ess", time.Now().UTC(), testOrigin{
+			Region: "us-west", Zone: "oregon",
+		}, "dc1", "www.test-host.com", "GET", "https://www.google.com/search?q-golang", "/search", 200, "google-search"},
+		{time.Now().UTC(), 100, "egress,", time.Now().UTC(), testOrigin{
+			Region: "us-central", Zone: "iowa",
+		}, "dc1", "localhost:8081", "GET", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "search"},
 	}
 	columnNames = []string{
 		StartTimeName, DurationName, TrafficName, CreatedTSName,
-		RegionName, ZoneName, SubZoneName, HostName,
+		OriginName,
+		//RegionName, ZoneName,
+		SubZoneName, HostName,
 		MethodName, UrlName, PathName, StatusCodeName, RouteName,
 	}
 )
+
+type testOrigin struct {
+	Region string `json:"region"`
+	Zone   string `json:"zone"`
+}
 
 // testEntry - timeseries access log struct
 type testEntry struct {
@@ -132,10 +151,11 @@ type testEntry struct {
 	Traffic   string    `json:"traffic"`
 	CreatedTS time.Time `json:"created-ts"`
 
-	Region  string `json:"region"`
-	Zone    string `json:"zone"`
-	SubZone string `json:"sub-zone"`
-	Host    string `json:"host"`
+	//Region  string `json:"region"`
+	//Zone    string `json:"zone"`
+	Origin  testOrigin `json:"origin"`
+	SubZone string     `json:"sub-zone"`
+	Host    string     `json:"host"`
 
 	Method     string `json:"method"`
 	Url        string `json:"url"`
