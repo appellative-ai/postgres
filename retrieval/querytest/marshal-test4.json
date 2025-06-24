@@ -1,0 +1,32 @@
+[
+  {
+    "start_time": "2025-06-24T13:10:56.133Z",
+    "duration_ms": 100,
+    "traffic": "egr,,ess",
+    "created_ts": "2025-06-24T13:10:56.133Z",
+    "region": "us-west",
+    "zone": "oregon",
+    "sub_zone": "dc1",
+    "host": "www.test-host.com",
+    "method": "GET",
+    "url": "https://www.google.com/search?q-golang",
+    "path": "/search",
+    "status_code": 200,
+    "route": "google-search"
+  },
+  {
+    "start_time": "2025-06-24T13:10:56.133Z",
+    "duration_ms": 100,
+    "traffic": "egress,",
+    "created_ts": "2025-06-24T13:10:56.133Z",
+    "region": "us-central",
+    "zone": "iowa",
+    "sub_zone": "dc1",
+    "host": "localhost:8081",
+    "method": "GET",
+    "url": "http://localhost:8081/advanced-go/search:google?q-golang",
+    "path": "/search",
+    "status_code": 200,
+    "route": "search"
+  }
+]

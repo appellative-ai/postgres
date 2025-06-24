@@ -115,8 +115,8 @@ func (t *testRows) scan(columnNames []string, values []any) error {
 
 var (
 	entries = []testEntry{
-		{time.Now().UTC(), 100, "egress", time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "GET", "https://www.google.com/search?q-golang", "/search", 200, "google-search"},
-		{time.Now().UTC(), 100, "egress", time.Now().UTC(), "us-central", "iowa", "dc1", "localhost:8081", "GET", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "search"},
+		{time.Now().UTC(), 100, "egr,,ess", time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "GET", "https://www.google.com/search?q-golang", "/search", 200, "google-search"},
+		{time.Now().UTC(), 100, "egress,", time.Now().UTC(), "us-central", "iowa", "dc1", "localhost:8081", "GET", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "search"},
 	}
 	columnNames = []string{
 		StartTimeName, DurationName, TrafficName, CreatedTSName,
