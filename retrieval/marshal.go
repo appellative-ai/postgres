@@ -108,11 +108,11 @@ func writeStruct(buf *bytes.Buffer, name string, v any) {
 			buf.WriteString(endOfLine)
 		}
 		f := rt.Field(i)
-		if f.Type.Kind() == reflect.String {
+		switch f.Type.Kind() {
+		case reflect.String:
 			s = fmt.Sprintf(textFmt, tagName(f), vt.Field(i))
-		} else {
+		default:
 			s = fmt.Sprintf(nonTextFmt, tagName(f), vt.Field(i))
-
 		}
 		//fmt.Printf(s)
 		buf.WriteString(s)

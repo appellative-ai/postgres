@@ -40,3 +40,8 @@ func testScan(ctx context.Context, fn ScanFunc, resource, sql string, args ...an
 	}
 	return errors.New(fmt.Sprintf("resource not supported : %v", resource))
 }
+
+func process(relation *Resolution) error {
+	rows := newTestRows(nil)
+	return relation.Scan(nil, rows.scan, timeseriesResource, "")
+}
