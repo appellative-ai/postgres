@@ -41,7 +41,19 @@ func testScan(ctx context.Context, fn ScanFunc, resource, sql string, args ...an
 	return errors.New(fmt.Sprintf("resource not supported : %v", resource))
 }
 
-func process(relation *Resolution) error {
-	rows := newTestRows(nil)
+func process(relation *Resolution, rows *testRows) error {
 	return relation.Scan(nil, rows.scan, timeseriesResource, "")
+}
+
+func ExampleTestResolution() {
+	rows := newTestRows(nil)
+
+	Relation.Scan = testScan
+	err := process(Relation, rows)
+
+	fmt.Printf("test: Resolution() -> [count:%v] [%v]\n", len(rows.result), err)
+
+	//Output:
+	//test: Resolution() -> [count:2] [<nil>]
+
 }
