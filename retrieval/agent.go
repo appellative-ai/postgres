@@ -88,7 +88,7 @@ func (a *agentT) configure(m *messaging.Message) {
 func (a *agentT) run() {
 }
 
-func (a *agentT) query(ctx context.Context, sql string, args []any) (rows pgx.Rows, err error) {
+func (a *agentT) retrieve(ctx context.Context, name, sql string, args []any) (rows pgx.Rows, err error) {
 	if a.state.DbClient == nil {
 		return nil, errors.New("DbClient is nil")
 	}

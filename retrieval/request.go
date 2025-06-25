@@ -20,7 +20,7 @@ type Attr struct {
 
 // Request - contains data needed to build the SQL statement related to the uri
 type request struct {
-	resource  string
+	name      string
 	template  string
 	uri       string
 	routeName string
@@ -34,11 +34,11 @@ type request struct {
 	h       http.Header
 }
 
-func newRequest(resource, template string) *request {
+func newRequest(name, template string) *request {
 	r := new(request)
-	r.resource = resource
+	r.name = name
 	r.template = template
-	r.uri = buildUri(queryRoot, resource)
+	r.uri = buildUri(queryRoot, name)
 	r.routeName = queryRouteName
 	r.h = make(http.Header)
 	return r
