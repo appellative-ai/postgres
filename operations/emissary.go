@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/core/messaging"
+	"github.com/appellative-ai/core/messaging"
 )
 
 // emissary attention
@@ -9,10 +9,10 @@ func emissaryAttend(a *agentT) {
 	var paused = false
 	if paused {
 	}
-	a.ticker.Start(-1)
+	//a.ticker.Start(-1)
 	for {
 		select {
-		case <-a.ticker.C():
+		case <-a.ticker.T.C:
 			// TODO: retrieval collective for new messages and advice
 		default:
 		}

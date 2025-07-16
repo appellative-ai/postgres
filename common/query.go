@@ -3,7 +3,7 @@ package common
 import (
 	"context"
 	"fmt"
-	"github.com/behavioral-ai/core/messaging"
+	"github.com/appellative-ai/core/messaging"
 	"net/http"
 )
 

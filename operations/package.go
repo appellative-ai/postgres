@@ -1,6 +1,6 @@
 package operations
 
-import "github.com/behavioral-ai/core/messaging"
+import "github.com/appellative-ai/core/messaging"
 
 const (
 // ServiceKind = "service"

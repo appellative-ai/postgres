@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/behavioral-ai/postgres/private"
+	"github.com/appellative-ai/postgres/private"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
