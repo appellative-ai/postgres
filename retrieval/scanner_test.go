@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/iox"
-	json2 "github.com/behavioral-ai/core/json"
+	"github.com/appellative-ai/core/iox"
+	json2 "github.com/appellative-ai/core/jsonx"
 	"time"
 )
 

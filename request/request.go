@@ -2,7 +2,7 @@ package request
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/postgres/common"
+	"github.com/appellative-ai/postgres/common"
 	"net/http"
 	"time"
 )
@@ -24,7 +24,7 @@ const (
 
 	nullExpectedCount = int64(-1)
 
-	PkgPath       = "github/behavioral-ai/postgres/pgxsql"
+	PkgPath       = "github/appellative-ai/postgres/pgxsql"
 	userConfigKey = "user"
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"

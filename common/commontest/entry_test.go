@@ -2,7 +2,7 @@ package commontest
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/postgres/common"
+	"github.com/appellative-ai/postgres/common"
 )
 
 func ExampleEntryVariant() {

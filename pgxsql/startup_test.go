@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/messaging"
+	"github.com/appellative-ai/core/messaging"
 	"time"
 )
 

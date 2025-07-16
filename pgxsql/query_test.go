@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/postgres/pgxdml"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"

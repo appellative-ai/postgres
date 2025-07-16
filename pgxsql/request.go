@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"fmt"
-	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/appellative-ai/postgres/pgxdml"
 	"net/http"
 	"time"
 )

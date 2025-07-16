@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/behavioral-ai/core/json"
+	"github.com/appellative-ai/core/json"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 

@@ -25,8 +25,8 @@ func ExampleBuildRequest() {
 	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: buildInsertUri(test-test.dev) -> postgres://host-name/github/behavioral-ai/postgres:database-name/request/test-test.dev
-	//test: buildQueryUri(test-test.prod) -> postgres://host-name/github/behavioral-ai/postgres:database-name/retrieval/test-test.prod
+	//test: buildInsertUri(test-test.dev) -> postgres://host-name/github/appellative-ai/postgres:database-name/request/test-test.dev
+	//test: buildQueryUri(test-test.prod) -> postgres://host-name/github/appellative-ai/postgres:database-name/retrieval/test-test.prod
 
 }
 

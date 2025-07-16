@@ -3,6 +3,8 @@ package operations
 import (
 	"fmt"
 	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/postgres/request"
+	"github.com/appellative-ai/postgres/retrieval"
 	"time"
 )
 

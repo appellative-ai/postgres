@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/appellative-ai/postgres/pgxdml"
 	"time"
 )
 

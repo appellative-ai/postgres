@@ -2,8 +2,8 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/behavioral-ai/core/json"
-	"github.com/behavioral-ai/core/messaging"
+	"github.com/appellative-ai/core/json"
+	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )

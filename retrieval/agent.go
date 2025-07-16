@@ -3,8 +3,8 @@ package retrieval
 import (
 	"context"
 	"errors"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/private"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/postgres/private"
 	"github.com/jackc/pgx/v5"
 	"net/http"
 	"time"

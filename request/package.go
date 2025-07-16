@@ -2,8 +2,8 @@ package request
 
 import (
 	"context"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/common"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/postgres/common"
 	"net/http"
 	"time"
 )

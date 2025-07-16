@@ -2,8 +2,7 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/module"
+	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 )
 
 const (
-	PkgPath       = "github/behavioral-ai/postgres/pgxsql"
+	PkgPath       = "github/appellative-ai/postgres/pgxsql"
 	userConfigKey = "user"
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"
@@ -55,7 +54,7 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *messaging.Status) {
 	req := newQueryRequestFromValues(resource, template, values, args...)
-	req.Header().Set(messaging.XTo, module.Domain)
+	req.Header().Set(messaging.XTo, "")
 	start := time.Now().UTC()
 	/* TODO - refactor
 	_, resp, status1 := messaging.ExchangeHeaders(h)

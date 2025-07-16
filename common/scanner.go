@@ -2,8 +2,9 @@ package common
 
 import (
 	"errors"
-	"github.com/appellative-ai/core/json"
+	"github.com/appellative-ai/core/jsonx"
 	"github.com/appellative-ai/core/messaging"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -22,7 +23,7 @@ func Unmarshal[T Scanner[T]](t any) ([]T, *messaging.Status) {
 	if t == nil {
 		return []T{}, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error: source is nil"))
 	}
-	t2, err := json.New[[]T](t, nil)
+	t2, err := jsonx.New[[]T](t, nil)
 	if err != nil {
 		return t2, messaging.NewStatus(messaging.StatusJsonDecodeError, err)
 	}

@@ -3,7 +3,7 @@ package request
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/postgres/common"
+	"github.com/appellative-ai/postgres/common"
 	"net/http"
 	"time"
 )

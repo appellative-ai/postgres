@@ -3,7 +3,7 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	"github.com/behavioral-ai/core/fmtx"
+	"github.com/appellative-ai/core/fmtx"
 	"reflect"
 	"strings"
 	"time"

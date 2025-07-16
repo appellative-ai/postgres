@@ -3,8 +3,8 @@ package request
 import (
 	"context"
 	"errors"
-	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/postgres/private"
+	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/postgres/private"
 	"net/http"
 	"time"
 )

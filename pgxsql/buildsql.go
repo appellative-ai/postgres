@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/behavioral-ai/postgres/pgxdml"
+	"github.com/appellative-ai/postgres/pgxdml"
 )
 
 func buildSql(r *request) string {
