@@ -6,7 +6,7 @@ import (
 )
 
 // Scanner - function for scanning rows
-func Scanner(fn ScanFunc, columnNames []string, rows Rows) error {
+func Scanner(fn ScanFunc, columnNames []string, rows rows) error {
 	if fn == nil {
 		return errors.New("scanner ScanFunc is nil")
 	}

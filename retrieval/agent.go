@@ -54,21 +54,27 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.running {
-		if m.Name == messaging.ConfigEvent {
-			a.configure(m)
+	switch m.Name {
+	case messaging.ConfigEvent:
+		if a.running {
 			return
 		}
-		if m.Name == messaging.StartupEvent {
-			a.run()
-			a.running = true
-			return
-		}
+		a.configure(m)
 		return
-	}
-	if m.Name == messaging.ShutdownEvent {
+	case messaging.StartupEvent:
+		if a.running {
+			return
+		}
+		a.running = true
+		a.run()
+		return
+	case messaging.ShutdownEvent:
+		if !a.running {
+			return
+		}
 		a.running = false
 	}
+
 }
 
 func (a *agentT) configure(m *messaging.Message) {

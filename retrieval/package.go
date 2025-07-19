@@ -6,13 +6,6 @@ import (
 	"time"
 )
 
-type Rows interface {
-	Close()
-	Next() bool
-	Err() error
-	Values() ([]any, error)
-}
-
 type ScanFunc func(columnNames []string, values []any) error
 
 type Resolution struct {

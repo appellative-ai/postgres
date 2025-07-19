@@ -19,7 +19,14 @@ const (
 	endOfLine   = ","
 )
 
-func Marshaler(columnNames []string, rows Rows) (bytes.Buffer, error) {
+type rows interface {
+	Close()
+	Next() bool
+	Err() error
+	Values() ([]any, error)
+}
+
+func Marshaler(columnNames []string, rows rows) (bytes.Buffer, error) {
 	buf := bytes.Buffer{}
 	if len(columnNames) == 0 {
 		return buf, errors.New("column names list is empty")
