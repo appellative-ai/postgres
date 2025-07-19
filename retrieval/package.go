@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+// Sync with Access agent
+const (
+	egressTraffic = "egress"
+	thresholdName = "x-threshold"
+	timeoutName   = "timeout"
+)
+
 type ScanFunc func(columnNames []string, values []any) error
 
 type Resolution struct {
@@ -17,24 +24,18 @@ type Resolution struct {
 var Relation = func() *Resolution {
 	return &Resolution{
 		Marshal: func(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error) {
-			newCtx, cancel := agent.setTimeout(ctx)
-			defer cancel()
-
 			start := time.Now().UTC()
-			rows, err := agent.retrieve(newCtx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), agent.statusCode(err))
+			rows, err := agent.retrieve(ctx, name, sql, args)
+			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)).SetTimeout(ctx))
 			if err != nil {
 				return bytes.Buffer{}, err
 			}
 			return Marshaler(createColumnNames(rows.FieldDescriptions()), rows)
 		},
 		Scan: func(ctx context.Context, fn ScanFunc, name, sql string, args ...any) error {
-			newCtx, cancel := agent.setTimeout(ctx)
-			defer cancel()
-
 			start := time.Now().UTC()
-			rows, err := agent.retrieve(newCtx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), agent.statusCode(err))
+			rows, err := agent.retrieve(ctx, name, sql, args)
+			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)).SetTimeout(ctx))
 			if err != nil {
 				return err
 			}

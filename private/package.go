@@ -20,16 +20,14 @@ type LogFunc func(traffic string, start time.Time, duration time.Duration, route
 
 // Configuration -
 type Configuration struct {
-	Timeout  time.Duration
-	Until    time.Duration
+	//Timeout  time.Duration
+	//Until    time.Duration
 	Log      LogFunc
 	DbClient *pgxpool.Pool
 }
 
 func (c *Configuration) Update(cfg *Configuration) {
-	if cfg.Timeout > 0 {
-		c.Timeout = cfg.Timeout
-	}
+
 	if cfg.Log != nil {
 		c.Log = cfg.Log
 	}
@@ -40,7 +38,6 @@ func (c *Configuration) Update(cfg *Configuration) {
 
 func NewConfiguration(timeout time.Duration) *Configuration {
 	c := new(Configuration)
-	c.Timeout = timeout
 	return c
 }
 

@@ -108,6 +108,8 @@ func (a *agentT) statusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
+/*
+
 func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
 	if ctx == nil {
 		ctx = context.Background()
@@ -123,13 +125,12 @@ func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
 
 }
 
-func (a *agentT) log(start time.Time, duration time.Duration, req *request, statusCode int) {
+
+*/
+
+func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp *response) {
 	if a.state.Log == nil {
 		return
 	}
-
-	resp := newResponse(statusCode)
-	// TODO : set timeout value for the threshold header
-	resp.Header().Set(private.ThresholdTimeoutName, "")
-	a.state.Log(private.TrafficEgress, start, duration, req.routeName, req, resp)
+	a.state.Log(egressTraffic, start, duration, req.routeName, req, resp)
 }
