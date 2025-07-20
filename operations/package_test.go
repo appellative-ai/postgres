@@ -35,5 +35,5 @@ func ExampleConfigLogging() {
 	//test: ConfigLogging() -> logging message invoke
 	//test: MessageLogging2() -> logging message invoke failure
 	//test: ConfigLogging() -> logging message invoke func
-	
+	//test: ServeHTTP()
 }

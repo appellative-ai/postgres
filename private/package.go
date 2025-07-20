@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"net/http"
 	"time"
 )
 
@@ -57,6 +58,13 @@ func ConfigurationContent(m *messaging.Message) (*Configuration, *messaging.Stat
 
 type LogFunc2 func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
 
+// ServeHTTP calls f(w, r).
+func (f LogFunc2) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//f(time.Now(), 0, nil, nil, 0)
+	fmt.Printf("test: ServeHTTP()\n")
+
+}
+
 func FuncLogging2(log LogFunc2) {
 	log(time.Now(), 0, nil, nil, 0)
 
@@ -78,6 +86,7 @@ func MessageLogging2(m *messaging.Message) {
 	ok := messaging.UpdateContent[LogFunc2](&fn, m)
 	if ok {
 		fn(time.Now(), 0, nil, nil, 0)
+		fn.ServeHTTP(nil, nil)
 	} else {
 		fmt.Printf("test: MessageLogging2() -> %v\n", "logging message invoke failure")
 	}
