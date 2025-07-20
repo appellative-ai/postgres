@@ -124,21 +124,22 @@ func (a *agentT) statusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	if d, ok := ctx.Deadline(); ok {
-		a.state.Until = time.Until(d)
-		return ctx, cancelFn
-	}
-	if a.state.Timeout <= 0 {
-		return ctx, cancelFn
-	}
-	return context.WithTimeout(ctx, a.state.Timeout)
+/*
+	func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
+		if ctx == nil {
+			ctx = context.Background()
+		}
+		if d, ok := ctx.Deadline(); ok {
+			a.state.Until = time.Until(d)
+			return ctx, cancelFn
+		}
+		if a.state.Timeout <= 0 {
+			return ctx, cancelFn
+		}
+		return context.WithTimeout(ctx, a.state.Timeout)
 
 }
-
+*/
 func (a *agentT) log(start time.Time, duration time.Duration, req *request, statusCode int) {
 	if a.state.Log == nil {
 		return

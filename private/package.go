@@ -2,6 +2,7 @@ package private
 
 import (
 	"errors"
+	"fmt"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
@@ -52,4 +53,32 @@ func ConfigurationContent(m *messaging.Message) (*Configuration, *messaging.Stat
 		return nil, messaging.NewStatus(messaging.StatusInvalidContent, errors.New("invalid content"))
 	}
 	return messaging.New[*Configuration](m.Content)
+}
+
+type LogFunc2 func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
+
+func FuncLogging2(log LogFunc2) {
+	log(time.Now(), 0, nil, nil, 0)
+
+}
+func FuncLogging(log func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)) {
+	log(time.Now(), 0, nil, nil, 0)
+}
+
+func MessageLogging(m *messaging.Message) {
+	var fn func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
+	ok := messaging.UpdateContent[func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)](&fn, m)
+	if ok {
+		fn(time.Now(), 0, nil, nil, 0)
+	}
+}
+
+func MessageLogging2(m *messaging.Message) {
+	var fn LogFunc2
+	ok := messaging.UpdateContent[LogFunc2](&fn, m)
+	if ok {
+		fn(time.Now(), 0, nil, nil, 0)
+	} else {
+		fmt.Printf("test: MessageLogging2() -> %v\n", "logging message invoke failure")
+	}
 }

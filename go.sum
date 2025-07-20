@@ -2,6 +2,8 @@ github.com/appellative-ai/core v0.0.0-20250716122441-ad699ae23a57 h1:zgRm04bWpT9
 github.com/appellative-ai/core v0.0.0-20250716122441-ad699ae23a57/go.mod h1:zUfT5qdIm9cwdzUDWXp692c1w0JibtfElKzMW1RfE5k=
 github.com/appellative-ai/core v0.0.0-20250716174431-7531e2d6def4 h1:EJhZaGVE0DGP1E02NNi5UDaC/Rj4Get1nXnhbaniSnw=
 github.com/appellative-ai/core v0.0.0-20250716174431-7531e2d6def4/go.mod h1:zUfT5qdIm9cwdzUDWXp692c1w0JibtfElKzMW1RfE5k=
+github.com/appellative-ai/core v0.0.0-20250719174137-d0f0140ee937 h1:+7thGvT2bn3bhHhNCdisoSXCW548qr6v9DxhPjUlZA4=
+github.com/appellative-ai/core v0.0.0-20250719174137-d0f0140ee937/go.mod h1:a8kfuZMJHcdtdksSK+aYw2Mp6lT+i25oQEB+UCqwyhs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -1,46 +1,30 @@
 package operations
 
-import "github.com/appellative-ai/core/messaging"
-
-const (
-// ServiceKind = "service"
+import (
+	"github.com/appellative-ai/core/messaging"
+	"time"
 )
 
-// Origin map and host keys
 const (
-	RegistryHost1Key = "registry-host1"
-	RegistryHost2Key = "registry-host2"
+	userConfigKey = "user"
+	pswdConfigKey = "pswd"
+	uriConfigKey  = "uri"
 )
 
-// Service - in the real world
-type Service struct {
-	Message func(msg *messaging.Message) bool
-	Advise  func(msg *messaging.Message) *messaging.Status
-	Trace   func(name, task, observation, action string)
-
-	SubscriptionCreate func(msg *messaging.Message)
-	SubscriptionCancel func(msg *messaging.Message)
+func ConfigClient(cfg map[string]string) error {
+	return clientStartup(cfg)
 }
 
-// Serve -
-var Serve = func() *Service {
-	return &Service{
-		Message: func(msg *messaging.Message) bool {
-			return true
-		},
-		Advise: func(msg *messaging.Message) *messaging.Status {
-			return messaging.StatusOK()
-		},
-		SubscriptionCreate: func(msg *messaging.Message) {
-		},
-		SubscriptionCancel: func(msg *messaging.Message) {
-		},
-		Trace: func(name, task, observation, action string) {
-		},
-	}
-}()
+func ConfigLogging(log func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)) {
 
-func Startup(msg *messaging.Message) {
-	agent.Message(msg)
+}
+
+func Startup() {
 	agent.Message(messaging.StartupMessage)
+
+}
+
+func Shutdown() {
+	agent.Message(messaging.ShutdownMessage)
+	clientShutdown()
 }

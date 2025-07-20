@@ -28,8 +28,8 @@ type Resolution struct {
 var Mutation = func() *Resolution {
 	return &Resolution{
 		Insert: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			newCtx, cancel := agent.setTimeout(ctx)
-			defer cancel()
+			//newCtx, cancel := agent.setTimeout(ctx)
+			//defer cancel()
 			start := time.Now().UTC()
 
 			/* TODO: determine how to bulk insert rows
@@ -39,26 +39,26 @@ var Mutation = func() *Resolution {
 				return Response{}, status1
 			}
 			*/
-			tag, status1 := agent.exec(newCtx, sql, args)
+			tag, status1 := agent.exec(ctx, sql, args)
 			agent.log(start, time.Since(start), newInsertRequest(resource, "", nil), status1.Code)
 			return tag, status1
 		},
 		Update: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			newCtx, cancel := agent.setTimeout(ctx)
-			defer cancel()
+			//newCtx, cancel := agent.setTimeout(ctx)
+			//defer cancel()
 			start := time.Now().UTC()
 
-			tag, status1 := agent.exec(newCtx, sql, args)
+			tag, status1 := agent.exec(ctx, sql, args)
 			agent.log(start, time.Since(start), newUpdateRequest(resource, "", nil, nil), status1.Code)
 			return tag, status1
 
 		},
 		Delete: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			newCtx, cancel := agent.setTimeout(ctx)
-			defer cancel()
+			//newCtx, cancel := agent.setTimeout(ctx)
+			//defer cancel()
 
 			start := time.Now().UTC()
-			tag, status1 := agent.exec(newCtx, sql, args)
+			tag, status1 := agent.exec(ctx, sql, args)
 			agent.log(start, time.Since(start), newDeleteRequest(resource, "", nil), status1.Code)
 			return tag, status1
 		},
@@ -67,8 +67,8 @@ var Mutation = func() *Resolution {
 
 // InsertT - execute a SQL insert statement
 func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	newCtx, cancel := agent.setTimeout(ctx)
-	defer cancel()
+	//newCtx, cancel := agent.setTimeout(ctx)
+	//defer cancel()
 
 	count, status, ok := execValues(h)
 	req := newInsertRequest(resource, "", nil, args...)
@@ -85,15 +85,15 @@ func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, 
 		return Response{}, status1
 	}
 	*/
-	tag, status1 := agent.exec(newCtx, sql, args)
+	tag, status1 := agent.exec(ctx, sql, args)
 	agent.log(start, time.Since(start), req, status1.Code)
 	return tag, status1
 }
 
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	newCtx, cancel := agent.setTimeout(ctx)
-	defer cancel()
+	//newCtx, cancel := agent.setTimeout(ctx)
+	//defer cancel()
 
 	req := newUpdateRequest(resource, "", nil, nil)
 	count, status, ok := execValues(h)
@@ -102,15 +102,15 @@ func Update(ctx context.Context, h http.Header, resource, sql string, args ...an
 		agent.log(start, time.Since(start), req, status)
 		return Response{RowsAffected: int64(count), Update: true}, messaging.NewStatus(status, nil)
 	}
-	tag, status1 := agent.exec(newCtx, sql, args)
+	tag, status1 := agent.exec(ctx, sql, args)
 	agent.log(start, time.Since(start), req, status1.Code)
 	return tag, status1
 }
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	newCtx, cancel := agent.setTimeout(ctx)
-	defer cancel()
+	//newCtx, cancel := agent.setTimeout(ctx)
+	//defer cancel()
 
 	count, status, ok := execValues(h)
 	req := newDeleteRequest(resource, "", nil, args...)
@@ -119,7 +119,7 @@ func Delete(ctx context.Context, h http.Header, resource, sql string, args ...an
 		agent.log(start, time.Since(start), req, status)
 		return Response{RowsAffected: int64(count), Delete: true}, messaging.NewStatus(status, nil)
 	}
-	tag, status1 := agent.exec(newCtx, sql, args)
+	tag, status1 := agent.exec(ctx, sql, args)
 	agent.log(start, time.Since(start), req, status1.Code)
 	return tag, status1
 }
