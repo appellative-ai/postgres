@@ -4,20 +4,18 @@ import (
 	"context"
 	"errors"
 	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/postgres/private"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
 	"time"
 )
 
 const (
-	NamespaceName   = "sql:postgres:agent/retrieval"
-	defaultDuration = time.Second * 3
+	NamespaceName = "sql:postgres:agent/retrieval"
 )
 
 var (
-	agent    *agentT
-	cancelFn = func() {}
+	agent *agentT
 )
 
 func init() {
@@ -25,8 +23,9 @@ func init() {
 }
 
 type agentT struct {
-	running bool
-	state   *private.Configuration
+	running  bool
+	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
+	dbClient *pgxpool.Pool
 }
 
 func NewAgent() messaging.Agent {
@@ -39,7 +38,6 @@ func NewAgent() messaging.Agent {
 
 func newAgent() *agentT {
 	a := new(agentT)
-	a.state = private.NewConfiguration(defaultDuration)
 	return a
 }
 
@@ -59,7 +57,8 @@ func (a *agentT) Message(m *messaging.Message) {
 		if a.running {
 			return
 		}
-		a.configure(m)
+		messaging.UpdateContent[func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)](&a.logFunc, m)
+		messaging.UpdateContent[*pgxpool.Pool](&a.dbClient, m)
 		return
 	case messaging.StartupEvent:
 		if a.running {
@@ -74,20 +73,6 @@ func (a *agentT) Message(m *messaging.Message) {
 		}
 		a.running = false
 	}
-
-}
-
-func (a *agentT) configure(m *messaging.Message) {
-	switch m.ContentType() {
-	case private.ContentTypeConfiguration:
-		cfg, status := private.ConfigurationContent(m)
-		if !status.OK() {
-			messaging.Reply(m, status, a.Name())
-			return
-		}
-		a.state.Update(cfg)
-	}
-	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }
 
 // Run - run the agent
@@ -95,10 +80,10 @@ func (a *agentT) run() {
 }
 
 func (a *agentT) retrieve(ctx context.Context, name, sql string, args []any) (rows pgx.Rows, err error) {
-	if a.state.DbClient == nil {
+	if a.dbClient == nil {
 		return nil, errors.New("DbClient is nil")
 	}
-	return a.state.DbClient.Query(ctx, sql, args)
+	return a.dbClient.Query(ctx, sql, args)
 }
 
 func (a *agentT) statusCode(err error) int {
@@ -108,29 +93,13 @@ func (a *agentT) statusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-/*
-
-func (a *agentT) setTimeout(ctx context.Context) (context.Context, func()) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	if d, ok := ctx.Deadline(); ok {
-		a.state.Until = time.Until(d)
-		return ctx, cancelFn
-	}
-	if a.state.Timeout <= 0 {
-		return ctx, cancelFn
-	}
-	return context.WithTimeout(ctx, a.state.Timeout)
-
-}
-
-
-*/
-
-func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp *response) {
-	if a.state.Log == nil {
+func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp *response, ctx context.Context) {
+	if a.logFunc == nil {
 		return
 	}
-	a.state.Log(egressTraffic, start, duration, req.routeName, req, resp)
+	var timeout time.Duration
+	if d, ok := ctx.Deadline(); ok {
+		timeout = time.Until(d)
+	}
+	a.logFunc(start, duration, req, resp, timeout)
 }

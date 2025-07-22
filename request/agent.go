@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/postgres/private"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
 	"time"
 )
@@ -29,8 +29,9 @@ func init() {
 }
 
 type agentT struct {
-	running bool
-	state   *private.Configuration
+	running  bool
+	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
+	dbClient *pgxpool.Pool
 }
 
 func NewAgent() messaging.Agent {
@@ -43,7 +44,6 @@ func NewAgent() messaging.Agent {
 
 func newAgent() *agentT {
 	a := new(agentT)
-	a.state = private.NewConfiguration(defaultDuration)
 	return a
 }
 
@@ -58,34 +58,27 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.running {
-		if m.Name == messaging.ConfigEvent {
-			a.configure(m)
+	switch m.Name {
+	case messaging.ConfigEvent:
+		if a.running {
 			return
 		}
-		if m.Name == messaging.StartupEvent {
-			a.run()
-			a.running = true
-			return
-		}
+		messaging.UpdateContent[func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)](&a.logFunc, m)
+		messaging.UpdateContent[*pgxpool.Pool](&a.dbClient, m)
 		return
-	}
-	if m.Name == messaging.ShutdownEvent {
+	case messaging.StartupEvent:
+		if a.running {
+			return
+		}
+		a.running = true
+		a.run()
+		return
+	case messaging.ShutdownEvent:
+		if !a.running {
+			return
+		}
 		a.running = false
 	}
-}
-
-func (a *agentT) configure(m *messaging.Message) {
-	switch m.ContentType() {
-	case private.ContentTypeConfiguration:
-		cfg, status := private.ConfigurationContent(m)
-		if !status.OK() {
-			messaging.Reply(m, status, a.Name())
-			return
-		}
-		a.state.Update(cfg)
-	}
-	messaging.Reply(m, messaging.StatusOK(), a.Name())
 }
 
 // Run - run the agent
@@ -94,17 +87,17 @@ func (a *agentT) run() {
 
 func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Response, status *messaging.Status) {
 	// Transaction processing.
-	if a.state.DbClient == nil {
+	if a.dbClient == nil {
 		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("DbClient is nil"))
 	}
-	txn, err0 := a.state.DbClient.Begin(ctx)
+	txn, err0 := a.dbClient.Begin(ctx)
 	if err0 != nil {
 		return tag, messaging.NewStatus(StatusTxnBeginError, err0)
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
 	// the tx commits successfully, this is a no-op
 	defer txn.Rollback(ctx)
-	cmd, err := a.state.DbClient.Exec(ctx, sql, args)
+	cmd, err := a.dbClient.Exec(ctx, sql, args)
 	if err != nil {
 		return newResponse(cmd), messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 	}
@@ -140,13 +133,13 @@ func (a *agentT) statusCode(err error) int {
 
 }
 */
-func (a *agentT) log(start time.Time, duration time.Duration, req *request, statusCode int) {
-	if a.state.Log == nil {
+func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp *logResponse, ctx context.Context) {
+	if a.logFunc == nil {
 		return
 	}
-
-	resp := newLogResponse(statusCode)
-	//TODO: Add timeout value for threshold header
-	resp.Header().Set(private.ThresholdTimeoutName, "")
-	a.state.Log(private.TrafficEgress, start, duration, req.routeName, req, resp)
+	var timeout time.Duration
+	if d, ok := ctx.Deadline(); ok {
+		timeout = time.Until(d)
+	}
+	a.logFunc(start, duration, req, resp, timeout)
 }

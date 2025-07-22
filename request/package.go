@@ -28,8 +28,9 @@ type Resolution struct {
 var Mutation = func() *Resolution {
 	return &Resolution{
 		Insert: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			//newCtx, cancel := agent.setTimeout(ctx)
-			//defer cancel()
+			if ctx == nil {
+				ctx = context.Background()
+			}
 			start := time.Now().UTC()
 
 			/* TODO: determine how to bulk insert rows
@@ -40,26 +41,27 @@ var Mutation = func() *Resolution {
 			}
 			*/
 			tag, status1 := agent.exec(ctx, sql, args)
-			agent.log(start, time.Since(start), newInsertRequest(resource, "", nil), status1.Code)
+			agent.log(start, time.Since(start), newInsertRequest(resource, "", nil), newLogResponse(status1.Code), ctx)
 			return tag, status1
 		},
 		Update: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			//newCtx, cancel := agent.setTimeout(ctx)
-			//defer cancel()
+			if ctx == nil {
+				ctx = context.Background()
+			}
 			start := time.Now().UTC()
 
 			tag, status1 := agent.exec(ctx, sql, args)
-			agent.log(start, time.Since(start), newUpdateRequest(resource, "", nil, nil), status1.Code)
+			agent.log(start, time.Since(start), newUpdateRequest(resource, "", nil, nil), newLogResponse(status1.Code), ctx)
 			return tag, status1
 
 		},
 		Delete: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
-			//newCtx, cancel := agent.setTimeout(ctx)
-			//defer cancel()
-
+			if ctx == nil {
+				ctx = context.Background()
+			}
 			start := time.Now().UTC()
 			tag, status1 := agent.exec(ctx, sql, args)
-			agent.log(start, time.Since(start), newDeleteRequest(resource, "", nil), status1.Code)
+			agent.log(start, time.Since(start), newDeleteRequest(resource, "", nil), newLogResponse(status1.Code), ctx)
 			return tag, status1
 		},
 	}
@@ -67,15 +69,15 @@ var Mutation = func() *Resolution {
 
 // InsertT - execute a SQL insert statement
 func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	//newCtx, cancel := agent.setTimeout(ctx)
-	//defer cancel()
-
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	count, status, ok := execValues(h)
 	req := newInsertRequest(resource, "", nil, args...)
 
 	start := time.Now().UTC()
 	if ok {
-		agent.log(start, time.Since(start), req, status)
+		agent.log(start, time.Since(start), req, newLogResponse(status), ctx)
 		return Response{RowsAffected: int64(count), Insert: true}, messaging.NewStatus(status, nil)
 	}
 	/* TODO: determine how to bulk insert rows
@@ -86,40 +88,40 @@ func InsertT[T common.Scanner[T]](ctx context.Context, h http.Header, resource, 
 	}
 	*/
 	tag, status1 := agent.exec(ctx, sql, args)
-	agent.log(start, time.Since(start), req, status1.Code)
+	agent.log(start, time.Since(start), req, newLogResponse(status1.Code), ctx)
 	return tag, status1
 }
 
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	//newCtx, cancel := agent.setTimeout(ctx)
-	//defer cancel()
-
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	req := newUpdateRequest(resource, "", nil, nil)
 	count, status, ok := execValues(h)
 	start := time.Now().UTC()
 	if ok {
-		agent.log(start, time.Since(start), req, status)
+		agent.log(start, time.Since(start), req, newLogResponse(status), ctx)
 		return Response{RowsAffected: int64(count), Update: true}, messaging.NewStatus(status, nil)
 	}
 	tag, status1 := agent.exec(ctx, sql, args)
-	agent.log(start, time.Since(start), req, status1.Code)
+	agent.log(start, time.Since(start), req, newLogResponse(status1.Code), ctx)
 	return tag, status1
 }
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, sql string, args ...any) (Response, *messaging.Status) {
-	//newCtx, cancel := agent.setTimeout(ctx)
-	//defer cancel()
-
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	count, status, ok := execValues(h)
 	req := newDeleteRequest(resource, "", nil, args...)
 	start := time.Now().UTC()
 	if ok {
-		agent.log(start, time.Since(start), req, status)
+		agent.log(start, time.Since(start), req, newLogResponse(status), ctx)
 		return Response{RowsAffected: int64(count), Delete: true}, messaging.NewStatus(status, nil)
 	}
 	tag, status1 := agent.exec(ctx, sql, args)
-	agent.log(start, time.Since(start), req, status1.Code)
+	agent.log(start, time.Since(start), req, newLogResponse(status1.Code), ctx)
 	return tag, status1
 }

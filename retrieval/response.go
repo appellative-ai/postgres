@@ -1,8 +1,6 @@
 package retrieval
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -26,9 +24,13 @@ func (r *response) Header() http.Header {
 	return r.header
 }
 
+/*
 func (r *response) SetTimeout(ctx context.Context) *response {
 	if d, ok := ctx.Deadline(); ok {
 		r.header.Add(thresholdName, fmt.Sprintf("%v=%v", timeoutName, d))
 	}
 	return r
 }
+
+
+*/

@@ -24,18 +24,24 @@ type Resolution struct {
 var Relation = func() *Resolution {
 	return &Resolution{
 		Marshal: func(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error) {
+			if ctx == nil {
+				ctx = context.Background()
+			}
 			start := time.Now().UTC()
 			rows, err := agent.retrieve(ctx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)).SetTimeout(ctx))
+			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)), ctx)
 			if err != nil {
 				return bytes.Buffer{}, err
 			}
 			return Marshaler(createColumnNames(rows.FieldDescriptions()), rows)
 		},
 		Scan: func(ctx context.Context, fn ScanFunc, name, sql string, args ...any) error {
+			if ctx == nil {
+				ctx = context.Background()
+			}
 			start := time.Now().UTC()
 			rows, err := agent.retrieve(ctx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)).SetTimeout(ctx))
+			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)), ctx)
 			if err != nil {
 				return err
 			}
