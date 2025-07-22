@@ -1,16 +1,14 @@
 package operations
 
 import (
-	"github.com/appellative-ai/postgres/private"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
 
 type operationsT struct {
 	running bool
-	timeout time.Duration
-	//Until    time.Duration
-	log      private.LogFunc
+	//timeout time.Duration
+	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }
 
