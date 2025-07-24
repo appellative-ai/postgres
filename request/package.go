@@ -3,6 +3,7 @@ package request
 import (
 	"context"
 	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/core/std"
 	"github.com/appellative-ai/postgres/common"
 	"net/http"
 	"time"
@@ -19,15 +20,15 @@ type Response struct {
 }
 
 type Resolution struct {
-	Insert func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status)
-	Update func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status)
-	Delete func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status)
+	Insert func(ctx context.Context, resource, sql string, args ...any) (Response, *std.Status)
+	Update func(ctx context.Context, resource, sql string, args ...any) (Response, *std.Status)
+	Delete func(ctx context.Context, resource, sql string, args ...any) (Response, *std.Status)
 }
 
 // Mutation -
 var Mutation = func() *Resolution {
 	return &Resolution{
-		Insert: func(ctx context.Context, resource, sql string, args ...any) (Response, *messaging.Status) {
+		Insert: func(ctx context.Context, resource, sql string, args ...any) (Response, *std.Status) {
 			if ctx == nil {
 				ctx = context.Background()
 			}
