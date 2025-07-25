@@ -1,42 +1,43 @@
 package notification
 
 import (
+	"context"
+	"errors"
 	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/core/std"
 )
 
 // Interface - notification interface
 type Interface struct {
-	Message        func(msg *messaging.Message) bool
-	ReceiveMessage func(name string) *messaging.Message
+	Message        func(ctx context.Context, msg *messaging.Message) error
+	ReceiveMessage func(ctx context.Context, name string) (*messaging.Message, error)
 
-	Advise        func(msg *messaging.Message) *std.Status
-	ReceiveAdvice func(name string) *messaging.Message
+	Advise        func(ctx context.Context, msg *messaging.Message) error
+	ReceiveAdvice func(ctx context.Context, name string) (*messaging.Message, error)
 
-	Trace func(name, task, observation, action string)
+	Trace func(ctx context.Context, name, task, observation, action string) error
 }
 
 // Notifier -
 var Notifier = func() *Interface {
 	return &Interface{
-		Message: func(msg *messaging.Message) bool {
-			//agent.message(msg)
-			return true
+		Message: func(ctx context.Context, msg *messaging.Message) error {
+			return errors.New("not implemented")
 		},
-		ReceiveMessage: func(name string) *messaging.Message {
+		ReceiveMessage: func(ctx context.Context, name string) (*messaging.Message, error) {
 			//agent.message(msg)
-			return nil
+			return nil, errors.New("not implemented")
 		},
-		Advise: func(msg *messaging.Message) *std.Status {
+		Advise: func(ctx context.Context, msg *messaging.Message) error {
 			//agent.advise(msg)
-			return std.StatusOK
+			return errors.New("not implemented")
 		},
-		ReceiveAdvice: func(name string) *messaging.Message {
+		ReceiveAdvice: func(ctx context.Context, name string) (*messaging.Message, error) {
 			//agent.message(msg)
-			return nil
+			return nil, errors.New("not implemented")
 		},
-		Trace: func(name, task, observation, action string) {
+		Trace: func(ctx context.Context, name, task, observation, action string) error {
 			//agent.trace(name, task, observation, action)
+			return nil
 		},
 	}
 }()
