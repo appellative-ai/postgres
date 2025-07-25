@@ -63,7 +63,7 @@ func ExampleExec_Insert() {
 		req := newInsertRequest(execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 
 		results, status := exec(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: Insert(nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {
 			fmt.Printf("test: Insert(nil,%v) -> [status:%v] [cmd:%v]\n", execInsertConditions, status, results)
@@ -86,7 +86,7 @@ func ExampleExec_Update() {
 		req := newUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := exec(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: Update(nil,%v) -> [status:%v] [tag:%v}\n", execUpdateConditions, status, results)
 		} else {
 			fmt.Printf("test: Update(nil,%v) -> [status:%v] [cmd:%v]\n", execUpdateConditions, status, results)
@@ -108,7 +108,7 @@ func ExampleExec_Delete() {
 		req := newDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
 		results, status := exec(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: Delete(nil,%v) -> [status:%v] [tag:%v}\n", execDeleteConditions, status, results)
 		} else {
 			fmt.Printf("test: Delete(nil,%v) -> [status:%v] [cmd:%v]\n", execDeleteConditions, status, results)

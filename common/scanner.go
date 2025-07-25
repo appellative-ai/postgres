@@ -3,13 +3,12 @@ package common
 import (
 	"errors"
 	"github.com/appellative-ai/core/jsonx"
-	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type Variant interface {
-	Get() ([]byte, *messaging.Status)
+	Get() ([]byte, error)
 }
 
 // Scanner - templated interface for scanning rows
@@ -19,24 +18,24 @@ type Scanner[T any] interface {
 }
 
 // Unmarshal - templated function for JSON unmarshalling
-func Unmarshal[T Scanner[T]](t any) ([]T, *messaging.Status) {
+func Unmarshal[T Scanner[T]](t any) ([]T, error) {
 	if t == nil {
-		return []T{}, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error: source is nil"))
+		return []T{}, errors.New("error: source is nil")
 	}
 	t2, err := jsonx.New[[]T](t, nil)
 	if err != nil {
-		return t2, messaging.NewStatus(messaging.StatusJsonDecodeError, err)
+		return t2, err
 	}
-	return t2, messaging.StatusOK()
+	return t2, nil
 }
 
 // Rows - templated function for creating rows
-func Rows[T Scanner[T]](entries []T) ([][]any, *messaging.Status) {
+func Rows[T Scanner[T]](entries []T) ([][]any, error) {
 	if len(entries) == 0 {
-		return nil, messaging.StatusNotFound()
+		return nil, errors.New("not found") //messaging.StatusNotFound()
 	}
 	var t T
-	return t.Rows(entries), messaging.StatusOK()
+	return t.Rows(entries), nil
 }
 
 // Scan - templated function for scanning rows

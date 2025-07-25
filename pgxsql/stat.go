@@ -2,15 +2,14 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func stat() (*pgxpool.Stat, *messaging.Status) {
+func stat() (*pgxpool.Stat, error) {
 	if dbClient == nil {
-		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL stat call : dbClient is nil"))
+		return nil, errors.New("error on PostgreSQL stat call : dbClient is nil")
 	}
-	return dbClient.Stat(), messaging.StatusOK()
+	return dbClient.Stat(), nil // messaging.StatusOK()
 }
 
 // Scrap

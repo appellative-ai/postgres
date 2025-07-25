@@ -2,8 +2,7 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/appellative-ai/core/json"
-	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/core/jsonx"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -15,31 +14,31 @@ type Scanner[T any] interface {
 }
 
 // Unmarshal - templated function for JSON unmarshalling
-func Unmarshal[T Scanner[T]](t any) ([]T, *messaging.Status) {
+func Unmarshal[T Scanner[T]](t any) ([]T, error) {
 	if t == nil {
-		return []T{}, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error: source is nil"))
+		return []T{}, errors.New("error: source is nil")
 	}
-	t2, err := json.New[[]T](t, nil)
+	t2, err := jsonx.New[[]T](t, nil)
 	//return json.New[[]T](t, nil)
 	if err != nil {
-		return t2, messaging.NewStatus(messaging.StatusJsonDecodeError, err)
+		return t2, err //messaging.NewStatus(messaging.StatusJsonDecodeError, err)
 	}
-	return t2, messaging.StatusOK()
+	return t2, nil //messaging.StatusOK()
 }
 
 // Rows - templated function for creating rows
-func Rows[T Scanner[T]](entries []T) ([][]any, *messaging.Status) {
+func Rows[T Scanner[T]](entries []T) ([][]any, error) {
 	if len(entries) == 0 {
-		return nil, messaging.StatusNotFound()
+		return nil, errors.New("not found") //messaging.StatusNotFound()
 	}
 	var t T
-	return t.Rows(entries), messaging.StatusOK()
+	return t.Rows(entries), nil //messaging.StatusOK()
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *messaging.Status) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
 	if rows == nil || rows.CommandTag().RowsAffected() == 0 {
-		return nil, messaging.StatusNotFound() //messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
+		return nil, errors.New("not found") //messaging.StatusNotFound() //messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
 	}
 	var s T
 	var t []T
@@ -51,24 +50,24 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *messaging.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
+			return t, err
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err)
+			return t, err
 		}
 		val, err1 := s.Scan(names, values)
 		if err1 != nil {
-			return t, messaging.NewStatus(messaging.StatusInvalidArgument, err1)
+			return t, err
 		}
 		t = append(t, val)
 		// Test this
 		//rows.Close()
 	}
 	if len(t) == 0 {
-		return t, messaging.StatusNotFound()
+		return t, errors.New("not found")
 	}
-	return t, messaging.StatusOK()
+	return t, nil
 }
 
 func createColumnNames(fields []pgconn.FieldDescription) []string {

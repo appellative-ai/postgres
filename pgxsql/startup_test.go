@@ -14,7 +14,7 @@ const (
 )
 
 func ExampleStartupPing() {
-	status := messaging.StatusOK() //host.Ping(PkgPath)
+	status := "OK" //messaging.StatusOK() //host.Ping(PkgPath)
 	fmt.Printf("test: Ping() -> [status:%v]\n", status)
 
 	//Output:

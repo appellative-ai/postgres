@@ -1,4 +1,4 @@
-package retrieval
+package resolution
 
 import (
 	"context"
@@ -41,7 +41,7 @@ func testScan(ctx context.Context, fn ScanFunc, resource, sql string, args ...an
 	return errors.New(fmt.Sprintf("resource not supported : %v", resource))
 }
 
-func process(relation *Interface, rows *testRows) error {
+func process(relation *Resolution, rows *testRows) error {
 	return relation.Scan(nil, rows.scan, timeseriesResource, "")
 }
 

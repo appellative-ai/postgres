@@ -3,12 +3,10 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/postgres/pgxdml"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
-	"net/http"
 	"time"
 )
 
@@ -104,7 +102,7 @@ func ExampleQuery_Conditions_Error() {
 		defer clientShutdown()
 		req := newQueryRequest(queryRowsRsc, queryConditionsError, nil)
 		rows, status := query(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v]\n", queryConditionsError, status)
 		} else {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, rows.CommandTag())
@@ -127,7 +125,7 @@ func ExampleQuery_Conditions() {
 		defer clientShutdown()
 		req := newQueryRequest(queryRowsRsc, queryConditions, nil)
 		results, status := query(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v]\n", queryConditions, status)
 		} else {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
@@ -152,7 +150,7 @@ func ExampleQuery_Conditions_Where() {
 		where := []pgxdml.Attr{{"location", "garage"}}
 		req := newQueryRequest(queryRowsRsc, queryConditionsWhere, where)
 		results, status := query(nil, req)
-		if !status.OK() {
+		if status != nil {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
 		} else {
 			fmt.Printf("test: retrieval(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
@@ -167,17 +165,17 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *messaging.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status error) {
 	conditions, status = scanRows(results)
-	if status.OK() && len(conditions) == 0 {
-		return nil, messaging.NewStatus(http.StatusNotFound, nil)
+	if status == nil && len(conditions) == 0 {
+		return nil, nil
 	}
 	return conditions, status
 }
 
-func scanRows(rows pgx.Rows) ([]TestConditions, *messaging.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, error) {
 	if rows == nil {
-		return nil, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("invalid request: Rows interface is empty"))
+		return nil, errors.New("invalid request: Rows interface is empty")
 	}
 	var err error
 	var values []any
@@ -185,15 +183,15 @@ func scanRows(rows pgx.Rows) ([]TestConditions, *messaging.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return nil, messaging.NewStatus(0, err)
+			return nil, err
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return nil, messaging.NewStatus(0, err)
+			return nil, err
 		}
 		conditions = append(conditions, scanColumns(values))
 	}
-	return conditions, messaging.StatusOK()
+	return conditions, nil
 }
 
 func scanColumns(values []any) TestConditions {

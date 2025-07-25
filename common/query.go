@@ -3,12 +3,11 @@ package common
 import (
 	"context"
 	"fmt"
-	"github.com/appellative-ai/core/messaging"
 	"net/http"
 )
 
 // QueryT -  process a SQL select statement, returning a typed array
-func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, sql string, args ...any) (rows []T, status *messaging.Status) {
+func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, sql string, args ...any) (rows []T, status error) {
 	var t T
 
 	if v, ok := any(t).(Variant); ok {

@@ -1,12 +1,11 @@
 package pgxsql
 
 import (
-	"github.com/appellative-ai/core/messaging"
 	"net/http"
 	"time"
 )
 
-func log(start time.Time, h http.Header, req *request, status *messaging.Status) {
+func log(start time.Time, h http.Header, req *request, status error) {
 	////from := ""
 	//if h != nil {
 	//	from = h.Get(messaging.XFrom)

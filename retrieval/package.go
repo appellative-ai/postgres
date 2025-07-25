@@ -6,23 +6,16 @@ import (
 	"time"
 )
 
-// Sync with Access agent
-const (
-	egressTraffic = "egress"
-	thresholdName = "x-threshold"
-	timeoutName   = "timeout"
-)
-
 type ScanFunc func(columnNames []string, values []any) error
 
-type Resolution struct {
+type Interface struct {
 	Marshal func(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error)
 	Scan    func(ctx context.Context, fn ScanFunc, name, sql string, args ...any) error
 }
 
-// Relation -
-var Relation = func() *Resolution {
-	return &Resolution{
+// Retriever -
+var Retriever = func() *Interface {
+	return &Interface{
 		Marshal: func(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error) {
 			if ctx == nil {
 				ctx = context.Background()

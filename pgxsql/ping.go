@@ -3,21 +3,19 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/appellative-ai/core/messaging"
-	"net/http"
 )
 
 // Ping - function for pinging the database cluster
-func ping(ctx context.Context, req *request) (status *messaging.Status) {
+func ping(ctx context.Context, req *request) (status error) {
 	if dbClient == nil {
-		return messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("error on PostgreSQL ping call : dbClient is nil"))
+		return errors.New("error on PostgreSQL ping call : dbClient is nil")
 	}
 	ctx = req.setTimeout(ctx)
 	err := dbClient.Ping(ctx)
 	if err != nil {
-		status = messaging.NewStatus(http.StatusInternalServerError, err)
+		status = err
 	} else {
-		status = messaging.StatusOK()
+		status = nil
 	}
 	return
 }

@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/appellative-ai/core/json"
+	"github.com/appellative-ai/core/jsonx"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -27,7 +27,7 @@ func newCmdTag(tag pgconn.CommandTag) CommandTag {
 }
 
 func NewCommandTag(url string) CommandTag {
-	tag, status := json.New[CommandTag](url, nil)
+	tag, status := jsonx.New[CommandTag](url, nil)
 	if status != nil {
 		return CommandTag{}
 	}

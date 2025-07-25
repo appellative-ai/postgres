@@ -30,6 +30,7 @@ func init() {
 
 type agentT struct {
 	running  bool
+	poolStat *pgxpool.Stat
 	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }
@@ -85,29 +86,24 @@ func (a *agentT) Message(m *messaging.Message) {
 func (a *agentT) run() {
 }
 
-func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Response, status *messaging.Status) {
+func (a *agentT) exec(ctx context.Context, sql string, args ...any) (tag Response, err error) {
 	// Transaction processing.
 	if a.dbClient == nil {
-		return tag, messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("DbClient is nil"))
+		return tag, errors.New("DbClient is nil") //messaging.NewStatus(messaging.StatusInvalidArgument, errors.New("DbClient is nil"))
 	}
 	txn, err0 := a.dbClient.Begin(ctx)
 	if err0 != nil {
-		return tag, messaging.NewStatus(StatusTxnBeginError, err0)
+		return tag, err0 //messaging.NewStatus(StatusTxnBeginError, err0)
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
 	// the tx commits successfully, this is a no-op
 	defer txn.Rollback(ctx)
-	cmd, err := a.dbClient.Exec(ctx, sql, args)
-	if err != nil {
-		return newResponse(cmd), messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
+	cmd, err1 := a.dbClient.Exec(ctx, sql, args)
+	if err1 != nil {
+		return newResponse(cmd), recast(err1) //messaging.NewStatus(messaging.StatusInvalidArgument, recast(err))
 	}
 	err = txn.Commit(ctx)
-	if err != nil {
-		status = messaging.NewStatus(StatusTxnCommitError, err)
-	} else {
-		status = messaging.StatusOK()
-	}
-	return newResponse(cmd), status
+	return newResponse(cmd), err
 }
 
 func (a *agentT) statusCode(err error) int {
@@ -115,6 +111,29 @@ func (a *agentT) statusCode(err error) int {
 		return http.StatusOK
 	}
 	return http.StatusInternalServerError
+}
+
+func (a *agentT) relate(ctx context.Context, instance, pattern, name string) (Response, error) {
+	if a.dbClient == nil {
+		return Response{}, errors.New("DbClient is nil")
+	}
+	//_, err1 := a.dbClient.Query(ctx, "",nil)
+	return Response{}, nil
+}
+
+func (a *agentT) ping(ctx context.Context) error {
+	if a.dbClient == nil {
+		return errors.New("DbClient is nil")
+	}
+	return a.dbClient.Ping(ctx)
+}
+
+func (a *agentT) stat() error {
+	if a.dbClient == nil {
+		return errors.New("DbClient is nil")
+	}
+	a.poolStat = a.dbClient.Stat()
+	return nil
 }
 
 /*
