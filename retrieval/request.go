@@ -8,38 +8,18 @@ import (
 const (
 	protocol       = "message-based"
 	postgresScheme = "postgres"
-	queryRoot      = "retrieval"
-	queryRouteName = "postgresql-retrieval"
-	selectMethod   = "select"
+	queryMethod    = "query"
 )
-
-type Attr struct {
-	Key string
-	Val any
-}
 
 // Request - contains data needed to build the SQL statement related to the uri
 type request struct {
-	name      string
-	template  string
-	uri       string
-	routeName string
-
-	values  [][]any
-	values2 map[string][]string
-	attrs   []Attr
-	where   []Attr
-	args    []any
-	error   error
-	h       http.Header
+	uri string
+	h   http.Header
 }
 
-func newRequest(name, template string) *request {
+func newRequest(name string) *request {
 	r := new(request)
-	r.name = name
-	r.template = template
-	r.uri = buildUri(queryRoot, name)
-	r.routeName = queryRouteName
+	r.uri = name //buildUri(queryRoot, name)
 	r.h = make(http.Header)
 	return r
 }
@@ -49,7 +29,7 @@ func (r *request) Header() http.Header {
 }
 
 func (r *request) Method() string {
-	return selectMethod
+	return queryMethod
 }
 
 func (r *request) Url() string {
@@ -62,21 +42,4 @@ func (r *request) Protocol() string {
 
 func buildUri(root, resource string) string {
 	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", "invalid-domain", "database-name", root, resource)
-}
-
-// buildQueryUri - build an uri with the Query NSS
-func buildQueryUri(resource string) string {
-	return buildUri(queryRoot, resource)
-}
-
-// BuildWhere - build the []Attr based on the URL retrieval parameters
-func buildWhere(values map[string][]string) []Attr {
-	if len(values) == 0 {
-		return nil
-	}
-	var where []Attr
-	for k, v := range values {
-		where = append(where, Attr{Key: k, Val: v[0]})
-	}
-	return where
 }

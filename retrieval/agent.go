@@ -24,7 +24,7 @@ func init() {
 
 type agentT struct {
 	running  bool
-	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
+	logFunc  func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }
 
@@ -57,7 +57,7 @@ func (a *agentT) Message(m *messaging.Message) {
 		if a.running {
 			return
 		}
-		messaging.UpdateContent[func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)](&a.logFunc, m)
+		messaging.UpdateContent[func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)](&a.logFunc, m)
 		messaging.UpdateContent[*pgxpool.Pool](&a.dbClient, m)
 		return
 	case messaging.StartupEvent:
@@ -93,7 +93,7 @@ func (a *agentT) statusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp *response, ctx context.Context) {
+func (a *agentT) log(start time.Time, duration time.Duration, route string, req *request, resp *response, ctx context.Context) {
 	if a.logFunc == nil {
 		return
 	}
@@ -101,5 +101,5 @@ func (a *agentT) log(start time.Time, duration time.Duration, req *request, resp
 	if d, ok := ctx.Deadline(); ok {
 		timeout = time.Until(d)
 	}
-	a.logFunc(start, duration, req, resp, timeout)
+	a.logFunc(start, duration, route, req, resp, timeout)
 }

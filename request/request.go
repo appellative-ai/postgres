@@ -2,68 +2,31 @@ package request
 
 import (
 	"fmt"
-	"github.com/appellative-ai/postgres/common"
 	"net/http"
-	"time"
 )
 
 const (
-	protocol       = "message-based"
-	postgresScheme = "postgres"
-	queryRoot      = "retrieval"
-	execRoot       = "request"
-	pingRoot       = "ping"
-
-	selectMethod = "select"
-	insertMethod = "insert"
-	updateMethod = "update"
-	deleteMethod = "delete"
-	insertCmd    = 1
-	updateCmd    = 2
-	deleteCmd    = 3
-
+	protocol          = "message-based"
+	postgresScheme    = "postgres"
 	nullExpectedCount = int64(-1)
-
-	PkgPath       = "github/appellative-ai/postgres/pgxsql"
-	userConfigKey = "user"
-	pswdConfigKey = "pswd"
-	uriConfigKey  = "uri"
-
-	insertRouteName = "postgres-insert"
-	updateRouteName = "postgres-update"
-	deleteRouteName = "postgres-delete"
+	execMethod        = "exec"
+	pingMethod        = "ping"
+	pingName          = "ping"
 )
 
 // Request - contains data needed to build the SQL statement related to the uri
 type request struct {
+	method        string
 	expectedCount int64
-	cmd           int
-	duration      time.Duration
-
-	resource  string
-	template  string
-	uri       string
-	routeName string
-
-	values  [][]any
-	values2 map[string][]string
-	attrs   []common.Attr
-	where   []common.Attr
-	args    []any
-	error   error
-	h       http.Header
+	uri           string
+	h             http.Header
 }
 
-func newRequest(cmd int, resource, template, uri, routeName string) *request {
+func newRequest(name, method string) *request {
 	r := new(request)
+	r.method = method
 	r.expectedCount = nullExpectedCount
-	r.cmd = cmd
-
-	r.resource = resource
-	r.template = template
-	r.uri = uri
-	r.routeName = routeName
-	r.duration = -1
+	r.uri = name
 	r.h = make(http.Header)
 	return r
 }
@@ -72,17 +35,7 @@ func (r *request) Header() http.Header {
 	return r.h
 }
 
-func (r *request) Method() string {
-	switch r.cmd {
-	case insertCmd:
-		return insertMethod
-	case updateCmd:
-		return updateMethod
-	case deleteCmd:
-		return deleteMethod
-	}
-	return "unknown"
-}
+func (r *request) Method() string { return execMethod }
 
 func (r *request) Url() string {
 	return r.uri
@@ -97,24 +50,10 @@ func buildUri(root, resource string) string {
 	//originUrn(nid, nss, test) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, test)
 }
 
-func newInsertRequest(resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(insertCmd, resource, template, buildUri(execRoot, resource), insertRouteName)
-	r.values = values
-	r.args = args
-	return r
+func newExecRequest(name string) *request {
+	return newRequest(name, execMethod)
 }
 
-func newUpdateRequest(resource, template string, attrs []common.Attr, where []common.Attr, args ...any) *request {
-	r := newRequest(updateCmd, resource, template, buildUri(execRoot, resource), updateRouteName)
-	r.attrs = attrs
-	r.where = where
-	r.args = args
-	return r
-}
-
-func newDeleteRequest(resource, template string, where []common.Attr, args ...any) *request {
-	r := newRequest(deleteCmd, resource, template, buildUri(execRoot, resource), deleteRouteName)
-	r.where = where
-	r.args = args
-	return r
+func newPingRequest() *request {
+	return newRequest(pingName, pingMethod)
 }

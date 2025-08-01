@@ -15,7 +15,7 @@ func ConfigClient(cfg map[string]string) error {
 	return clientStartup(cfg)
 }
 
-func ConfigLogging(log func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)) {
+func ConfigLogging(log func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)) {
 
 }
 

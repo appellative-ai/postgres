@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	retrievalRouteName = "postgresql-retrieval"
+)
+
 type ScanFunc func(columnNames []string, values []any) error
 
 type Interface struct {
@@ -22,7 +26,7 @@ var Retriever = func() *Interface {
 			}
 			start := time.Now().UTC()
 			rows, err := agent.retrieve(ctx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)), ctx)
+			agent.log(start, time.Since(start), retrievalRouteName, newRequest(name), newResponse(agent.statusCode(err)), ctx)
 			if err != nil {
 				return bytes.Buffer{}, err
 			}
@@ -34,7 +38,7 @@ var Retriever = func() *Interface {
 			}
 			start := time.Now().UTC()
 			rows, err := agent.retrieve(ctx, name, sql, args)
-			agent.log(start, time.Since(start), newRequest(name, "template"), newResponse(agent.statusCode(err)), ctx)
+			agent.log(start, time.Since(start), retrievalRouteName, newRequest(name), newResponse(agent.statusCode(err)), ctx)
 			if err != nil {
 				return err
 			}

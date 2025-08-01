@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-func newResponse(tag pgconn.CommandTag) Response {
-	return Response{
+func newResult(tag pgconn.CommandTag) Result {
+	return Result{
 		Sql:          tag.String(),
 		RowsAffected: tag.RowsAffected(),
 		Insert:       tag.Insert(),
@@ -16,22 +16,22 @@ func newResponse(tag pgconn.CommandTag) Response {
 	}
 }
 
-type logResponse struct {
+type response struct {
 	statusCode int
 	header     http.Header
 }
 
-func newLogResponse(statusCode int) *logResponse {
-	r := new(logResponse)
+func newResponse(statusCode int) *response {
+	r := new(response)
 	r.statusCode = statusCode
 	r.header = make(http.Header)
 	return r
 }
 
-func (r *logResponse) StatusCode() int {
+func (r *response) StatusCode() int {
 	return r.statusCode
 }
 
-func (r *logResponse) Header() http.Header {
+func (r *response) Header() http.Header {
 	return r.header
 }

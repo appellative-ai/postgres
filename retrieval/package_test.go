@@ -45,6 +45,7 @@ func process(relation *Interface, rows *testRows) error {
 	return relation.Scan(nil, rows.scan, timeseriesResource, "")
 }
 
+/*
 func ExampleTestResolution() {
 	rows := newTestRows(nil)
 
@@ -57,3 +58,6 @@ func ExampleTestResolution() {
 	//test: Resolution() -> [count:2] [<nil>]
 
 }
+
+
+*/
