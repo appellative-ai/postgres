@@ -8,6 +8,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: newAgent() -> [%v]\n", a)
 
 	//Output:
-	//test: newAgent() -> [sql:postgres:agent/retrieval]
+	//test: newAgent() -> [common:sql:agent/retrieval/postgres]
 
 }

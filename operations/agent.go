@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	NamespaceName = "sql:postgres:agent/operations/postgres"
-	duration      = time.Second * 30
+	AgentName = "common:sql:agent/operations/postgres"
+	duration  = time.Second * 30
 )
 
 var (
@@ -49,7 +49,7 @@ func newAgent() *agentT {
 func (a *agentT) String() string { return a.Name() }
 
 // Name - agent identifier
-func (a *agentT) Name() string { return NamespaceName }
+func (a *agentT) Name() string { return AgentName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {

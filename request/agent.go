@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	NamespaceName          = "sql:postgres:agent/request"
+	AgentName              = "common:sql:agent/request/postgres"
 	defaultDuration        = time.Second * 3
 	StatusTxnBeginError    = int(102) // Transaction processing begin error
 	StatusTxnRollbackError = int(103) // Transaction processing rollback error
@@ -52,7 +52,7 @@ func newAgent() *agentT {
 func (a *agentT) String() string { return a.Name() }
 
 // Name - agent name
-func (a *agentT) Name() string { return NamespaceName }
+func (a *agentT) Name() string { return AgentName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
