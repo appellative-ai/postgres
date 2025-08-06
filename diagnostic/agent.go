@@ -5,6 +5,8 @@ import (
 	"errors"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"net/http"
+	"time"
 )
 
 const (
@@ -22,6 +24,7 @@ func init() {
 type agentT struct {
 	running  bool
 	poolStat *pgxpool.Stat
+	logFunc  func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }
 
@@ -51,6 +54,7 @@ func (a *agentT) Message(m *messaging.Message) {
 		if a.running {
 			return
 		}
+		messaging.UpdateContent[func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)](&a.logFunc, m)
 		messaging.UpdateContent[*pgxpool.Pool](&a.dbClient, m)
 		return
 	case messaging.StartupEvent:
@@ -85,4 +89,22 @@ func (a *agentT) stat() error {
 	}
 	a.poolStat = a.dbClient.Stat()
 	return nil
+}
+
+func (a *agentT) statusCode(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
+	return http.StatusInternalServerError
+}
+
+func (a *agentT) log(start time.Time, duration time.Duration, route string, req *request, resp *response, ctx context.Context) {
+	if a.logFunc == nil {
+		return
+	}
+	var timeout time.Duration
+	if d, ok := ctx.Deadline(); ok {
+		timeout = time.Until(d)
+	}
+	a.logFunc(start, duration, route, req, resp, timeout)
 }

@@ -6,8 +6,7 @@ import (
 )
 
 const (
-	requestRouteName = "postgres-request"
-	pingRouteName    = "postgres-ping"
+	routeName = "postgres-request"
 )
 
 // Result - results of a command
@@ -38,7 +37,7 @@ var Requester = func() *Interface {
 			}
 			start := time.Now().UTC()
 			tag, err := agent.exec(ctx, sql, args)
-			agent.log(start, time.Since(start), requestRouteName, newExecRequest(name), newResponse(agent.statusCode(err)), ctx)
+			agent.log(start, time.Since(start), routeName, newExecRequest(name), newResponse(agent.statusCode(err)), ctx)
 			return tag, err
 		},
 	}

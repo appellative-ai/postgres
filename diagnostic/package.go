@@ -2,10 +2,13 @@ package diagnostic
 
 import (
 	"context"
+	"time"
 )
 
 const (
-	pingRouteName = "postgres-ping"
+	routeName = "postgres-ping"
+	method    = "ping"
+	name
 )
 
 type Stat struct {
@@ -24,7 +27,10 @@ var Diagnostic = func() *Interface {
 			if ctx == nil {
 				ctx = context.Background()
 			}
-			return agent.ping(ctx)
+			start := time.Now().UTC()
+			err := agent.ping(ctx)
+			agent.log(start, time.Since(start), routeName, newRequest(name, method), newResponse(agent.statusCode(err)), ctx)
+			return err
 		},
 		Stat: func() error {
 			return agent.stat()
