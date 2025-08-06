@@ -27,8 +27,6 @@ type Stat struct {
 // TODO : determine if a bulk insert is needed
 type Interface struct {
 	Execute func(ctx context.Context, name, sql string, args ...any) (Result, error)
-	Ping    func(ctx context.Context) error
-	Stat    func() error
 }
 
 // Requester -
@@ -42,18 +40,6 @@ var Requester = func() *Interface {
 			tag, err := agent.exec(ctx, sql, args)
 			agent.log(start, time.Since(start), requestRouteName, newExecRequest(name), newResponse(agent.statusCode(err)), ctx)
 			return tag, err
-		},
-		Ping: func(ctx context.Context) error {
-			if ctx == nil {
-				ctx = context.Background()
-			}
-			start := time.Now().UTC()
-			err := agent.ping(ctx)
-			agent.log(start, time.Since(start), pingRouteName, newPingRequest(), newResponse(agent.statusCode(err)), ctx)
-			return err
-		},
-		Stat: func() error {
-			return agent.stat()
 		},
 	}
 }()

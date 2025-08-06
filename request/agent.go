@@ -113,21 +113,6 @@ func (a *agentT) statusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-func (a *agentT) ping(ctx context.Context) error {
-	if a.dbClient == nil {
-		return errors.New("DbClient is nil")
-	}
-	return a.dbClient.Ping(ctx)
-}
-
-func (a *agentT) stat() error {
-	if a.dbClient == nil {
-		return errors.New("DbClient is nil")
-	}
-	a.poolStat = a.dbClient.Stat()
-	return nil
-}
-
 func (a *agentT) log(start time.Time, duration time.Duration, route string, req *request, resp *response, ctx context.Context) {
 	if a.logFunc == nil {
 		return
