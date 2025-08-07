@@ -64,8 +64,8 @@ func (a *agentT) Message(m *messaging.Message) {
 		if a.running {
 			return
 		}
-		messaging.UpdateContent[func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)](&a.logFunc, m)
-		messaging.UpdateContent[*pgxpool.Pool](&a.dbClient, m)
+		messaging.UpdateContent[func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)](m, &a.logFunc)
+		messaging.UpdateContent[*pgxpool.Pool](m, &a.dbClient)
 		return
 	case messaging.StartupEvent:
 		if a.running {

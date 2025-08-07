@@ -19,8 +19,10 @@ func NewRetriever(m *std.MapT[string, any]) retrieval.Interface {
 }
 
 func (r *retrievalT) Marshal(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error) {
-	//rows, err := agent.retrieve(ctx, name, sql, args)
-	t := r.cache.Load(name)
+	t, ok := r.cache.Load(name)
+	if !ok {
+		return bytes.Buffer{}, nil
+	}
 	buf, err := json.Marshal(t)
 	if err != nil {
 		return bytes.Buffer{}, err
