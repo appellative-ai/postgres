@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	insertSql = "insert"
+	insertSql = "Insert"
 )
 
 type requestT struct {
