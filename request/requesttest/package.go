@@ -24,10 +24,10 @@ func NewRequester(m *std.MapT[string, any]) *request.Interface {
 }
 
 func (r *requestT) Execute(ctx context.Context, name, sql string, args ...any) (request.Result, error) {
-	if name == "" || len(args) == 0 {
-		return request.Result{}, errors.New(fmt.Sprintf("name is empty [%v] or args are empty", name))
+	if name == "" || sql == "" || len(args) == 0 {
+		return request.Result{}, errors.New(fmt.Sprintf("name is empty [%v], sql is empty [%v] or args are empty", name, sql))
 	}
-	if strings.Contains(name, insertSql) {
+	if strings.Contains(sql, insertSql) {
 		r.cache.Store(name, args[0])
 		return request.Result{Insert: true, RowsAffected: 1}, nil
 	}
