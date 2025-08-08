@@ -12,10 +12,10 @@ type retrievalT struct {
 	cache *std.MapT[string, any]
 }
 
-func NewRetriever(m *std.MapT[string, any]) retrieval.Interface {
+func NewRetriever(m *std.MapT[string, any]) *retrieval.Interface {
 	r := new(retrievalT)
 	r.cache = m
-	return retrieval.Interface{Marshal: r.Marshal, Scan: r.Scan}
+	return &retrieval.Interface{Marshal: r.Marshal, Scan: r.Scan}
 }
 
 func (r *retrievalT) Marshal(ctx context.Context, name, sql string, args ...any) (bytes.Buffer, error) {

@@ -17,10 +17,10 @@ type requestT struct {
 	cache *std.MapT[string, any]
 }
 
-func NewRequester(m *std.MapT[string, any]) request.Interface {
+func NewRequester(m *std.MapT[string, any]) *request.Interface {
 	r := new(requestT)
 	r.cache = m
-	return request.Interface{Execute: r.Execute}
+	return &request.Interface{Execute: r.Execute}
 }
 
 func (r *requestT) Execute(ctx context.Context, name, sql string, args ...any) (request.Result, error) {
