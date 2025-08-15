@@ -13,7 +13,7 @@ func emissaryAttend(a *agentT) {
 	for {
 		select {
 		case <-a.ticker.T.C:
-			// TODO: retrieval collective for new messages and advice
+			// TODO: what background tasks does operations need, that center cant better handle??
 		default:
 		}
 		select {
