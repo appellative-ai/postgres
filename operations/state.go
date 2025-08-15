@@ -6,8 +6,6 @@ import (
 )
 
 type operationsT struct {
-	running bool
-	//timeout time.Duration
 	logFunc  func(start time.Time, duration time.Duration, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }

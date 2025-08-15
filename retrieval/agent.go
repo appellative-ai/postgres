@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
+	"sync/atomic"
 	"time"
 )
 
@@ -23,7 +24,7 @@ func init() {
 }
 
 type agentT struct {
-	running  bool
+	running  atomic.Bool
 	logFunc  func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)
 	dbClient *pgxpool.Pool
 }
@@ -38,6 +39,7 @@ func NewAgent() messaging.Agent {
 
 func newAgent() *agentT {
 	a := new(agentT)
+	a.running.Store(false)
 	return a
 }
 
@@ -54,24 +56,20 @@ func (a *agentT) Message(m *messaging.Message) {
 	}
 	switch m.Name {
 	case messaging.ConfigEvent:
-		if a.running {
-			return
-		}
-		messaging.UpdateContent[func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)](m, &a.logFunc)
-		messaging.UpdateContent[*pgxpool.Pool](m, &a.dbClient)
+		a.config(m)
 		return
 	case messaging.StartupEvent:
-		if a.running {
+		if a.running.Load() {
 			return
 		}
-		a.running = true
+		a.running.Store(true)
 		a.run()
 		return
 	case messaging.ShutdownEvent:
-		if !a.running {
+		if !a.running.Load() {
 			return
 		}
-		a.running = false
+		a.running.Store(false)
 	}
 }
 

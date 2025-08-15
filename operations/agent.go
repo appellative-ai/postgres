@@ -3,9 +3,9 @@ package operations
 import (
 	"fmt"
 	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/core/std"
 	"github.com/appellative-ai/postgres/request"
 	"github.com/appellative-ai/postgres/retrieval"
+	"sync/atomic"
 	"time"
 )
 
@@ -25,8 +25,9 @@ func init() {
 }
 
 type agentT struct {
-	state  *operationsT
-	agents *messaging.Exchange
+	running atomic.Bool
+	state   *operationsT
+	agents  *messaging.Exchange
 
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -34,6 +35,7 @@ type agentT struct {
 
 func newAgent() *agentT {
 	a := new(agentT)
+	a.running.Store(false)
 	a.agents = messaging.NewExchange()
 	a.agents.Register(request.NewAgent())
 	a.agents.Register(retrieval.NewAgent())
@@ -56,20 +58,27 @@ func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	if !a.state.running {
-		if m.Name == messaging.ConfigEvent {
-			a.configure(m)
-			return
-		}
-		if m.Name == messaging.StartupEvent {
-			a.run()
-			a.state.running = true
-			return
-		}
+	switch m.Name {
+	case messaging.ConfigEvent:
+		a.config(m)
 		return
-	}
-	if m.Name == messaging.ShutdownEvent {
-		a.state.running = false
+	case messaging.StartupEvent:
+		if a.running.Load() {
+			return
+		}
+		a.running.Store(true)
+		a.run()
+		return
+	case messaging.ShutdownEvent:
+		if !a.running.Load() {
+			return
+		}
+		a.running.Store(false)
+	case messaging.PauseEvent:
+		//a.enabled.Store(false)
+		//a.events.empty()
+	case messaging.ResumeEvent:
+		//a.enabled.Store(true)
 	}
 	switch m.Channel() {
 	case messaging.ChannelControl, messaging.ChannelEmissary:
@@ -87,22 +96,6 @@ func (a *agentT) run() {
 func (a *agentT) emissaryFinalize() {
 	a.emissary.Close()
 	a.ticker.Stop()
-}
-
-func (a *agentT) configure(m *messaging.Message) {
-	switch m.ContentType() {
-	case messaging.ContentTypeMap:
-		/*
-			cfg, status := messaging.MapContent(m)
-			if !status.OK() {
-				messaging.Reply(m, messaging.EmptyMapError(a.Name()), a.Name())
-				return
-			}
-
-
-		*/
-	}
-	messaging.Reply(m, std.StatusOK, a.Name())
 }
 
 func (a *agentT) configureAgents() {
