@@ -10,10 +10,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var (
-	dbClient *pgxpool.Pool
-)
-
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
 func clientStartup(cfg map[string]string) error {
 	if cfg == nil {
@@ -29,11 +25,11 @@ func clientStartup(cfg map[string]string) error {
 		return err
 	}
 	// Create pooled client and acquire connection
-	dbClient, err = pgxpool.New(context.Background(), s)
+	agent.dbClient, err = pgxpool.New(context.Background(), s)
 	if err != nil {
 		return errors.New(fmt.Sprintf("unable to create connection pool: %v\n", err))
 	}
-	conn, err1 := dbClient.Acquire(context.Background())
+	conn, err1 := agent.dbClient.Acquire(context.Background())
 	if err1 != nil {
 		clientShutdown()
 		return errors.New(fmt.Sprintf("unable to acquire connection from pool: %v\n", err1))
@@ -43,9 +39,9 @@ func clientStartup(cfg map[string]string) error {
 }
 
 func clientShutdown() {
-	if dbClient != nil {
-		dbClient.Close()
-		dbClient = nil
+	if agent.dbClient != nil {
+		agent.dbClient.Close()
+		agent.dbClient = nil
 	}
 }
 

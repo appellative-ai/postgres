@@ -1,17 +1,22 @@
 package operations
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/appellative-ai/core/messaging"
 	"github.com/appellative-ai/postgres/request"
 	"github.com/appellative-ai/postgres/retrieval"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"net/http"
 	"sync/atomic"
 	"time"
 )
 
 const (
-	AgentName = "common:sql:agent/operations/postgres"
-	duration  = time.Second * 30
+	AgentName       = "common:sql:agent/operations/postgres"
+	duration        = time.Second * 30
+	timeoutDuration = time.Millisecond * 1500
 )
 
 var (
@@ -20,14 +25,16 @@ var (
 )
 
 func init() {
-	agent = newAgent()
-	Agent = agent
+	Agent = newAgent()
 }
 
 type agentT struct {
 	running atomic.Bool
-	state   *operationsT
 	agents  *messaging.Exchange
+
+	poolStat *pgxpool.Stat
+	logFunc  func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)
+	dbClient *pgxpool.Pool
 
 	ticker   *messaging.Ticker
 	emissary *messaging.Channel
@@ -35,11 +42,11 @@ type agentT struct {
 
 func newAgent() *agentT {
 	a := new(agentT)
+	agent = a
 	a.running.Store(false)
 	a.agents = messaging.NewExchange()
 	a.agents.Register(request.NewAgent())
 	a.agents.Register(retrieval.NewAgent())
-	agent = a
 
 	a.ticker = messaging.NewTicker(messaging.ChannelEmissary, duration)
 	a.emissary = messaging.NewEmissaryChannel()
@@ -105,4 +112,59 @@ func (a *agentT) configureAgents() {
 	//	Thing:          thing,
 	//	Relation:       relation,
 	//}))
+}
+
+func (a *agentT) clientStartup(cfg map[string]string) error {
+	err := clientStartup(cfg)
+	if err != nil {
+		return err
+	}
+	m := messaging.NewConfigMessage(a.dbClient)
+	a.agents.Broadcast(m)
+	return nil
+}
+
+func (a *agentT) configLogging(log func(start time.Time, duration time.Duration, route string, req any, resp any, timeout time.Duration)) {
+	if log == nil {
+		return
+	}
+	a.logFunc = log
+	m := messaging.NewConfigMessage(log)
+	a.agents.Broadcast(m)
+}
+
+func (a *agentT) ping(ctx context.Context) error {
+	if a.dbClient == nil {
+		return errors.New("DbClient is nil")
+	}
+	start := time.Now().UTC()
+	err := a.dbClient.Ping(ctx)
+	a.log(start, time.Since(start), pingRouteName, newRequest("", ""), newResponse(a.statusCode(err)), ctx)
+	return err
+}
+
+func (a *agentT) stat() error {
+	if a.dbClient == nil {
+		return errors.New("DbClient is nil")
+	}
+	a.poolStat = a.dbClient.Stat()
+	return nil
+}
+
+func (a *agentT) statusCode(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
+	return http.StatusInternalServerError
+}
+
+func (a *agentT) log(start time.Time, duration time.Duration, route string, req *requestT, resp *response, ctx context.Context) {
+	if a.logFunc == nil {
+		return
+	}
+	var timeout time.Duration
+	if d, ok := ctx.Deadline(); ok {
+		timeout = time.Until(d)
+	}
+	a.logFunc(start, duration, route, req, resp, timeout)
 }
