@@ -3,7 +3,7 @@ module github.com/appellative-ai/postgres
 go 1.23.11
 
 require (
-	github.com/appellative-ai/core v0.0.0-20250815132121-7ff782c70496
+	github.com/appellative-ai/core v0.0.0-20250820111950-2c383ce94c33
 	github.com/jackc/pgx/v5 v5.7.5
 )
 
