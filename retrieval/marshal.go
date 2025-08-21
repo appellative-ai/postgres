@@ -26,13 +26,13 @@ type rows interface {
 	Values() ([]any, error)
 }
 
-func Marshaler(columnNames []string, rows rows) (bytes.Buffer, error) {
-	buf := bytes.Buffer{}
+func Marshaler(columnNames []string, rows rows) (*bytes.Buffer, error) {
+	buf := new(bytes.Buffer)
 	if len(columnNames) == 0 {
-		return buf, errors.New("column names list is empty")
+		return nil, errors.New("column names list is empty")
 	}
 	if rows == nil {
-		return buf, errors.New("rows list is empty")
+		return nil, errors.New("rows list is empty")
 	}
 	var err error
 	var values []any
@@ -55,7 +55,7 @@ func Marshaler(columnNames []string, rows rows) (bytes.Buffer, error) {
 			buf.WriteString(endOfLine)
 		}
 		buf.WriteString(objectStart)
-		writeValues(&buf, columnNames, values)
+		writeValues(buf, columnNames, values)
 		buf.WriteString(objectEnd)
 		count++
 	}

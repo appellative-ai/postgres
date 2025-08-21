@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	insertSql = "Insert"
+	insert = "insert"
 )
 
 type requestT struct {
@@ -27,7 +27,8 @@ func (r *requestT) Execute(ctx context.Context, name, sql string, args ...any) (
 	if name == "" || sql == "" || len(args) == 0 {
 		return request.Result{}, errors.New(fmt.Sprintf("name is empty [%v], sql is empty [%v] or args are empty", name, sql))
 	}
-	if strings.Contains(sql, insertSql) {
+	s := strings.ToLower(sql)
+	if strings.Contains(s, insert) {
 		r.cache.Store(name, args[0])
 		return request.Result{Insert: true, RowsAffected: 1}, nil
 	}
