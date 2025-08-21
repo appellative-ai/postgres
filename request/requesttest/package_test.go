@@ -2,11 +2,11 @@ package requesttest
 
 import (
 	"fmt"
-	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/common/core"
 )
 
 func ExampleNewRequester() {
-	m := std.NewSyncMap[string, any]()
+	m := core.NewSyncMap[string, any]()
 	r := NewRequester(m)
 
 	fmt.Printf("test: NewRequester() -> %v\n", r != nil)

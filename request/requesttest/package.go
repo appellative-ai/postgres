@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/common/core"
 	"github.com/appellative-ai/postgres/request"
 	"strings"
 )
@@ -14,10 +14,10 @@ const (
 )
 
 type requestT struct {
-	cache *std.MapT[string, any]
+	cache *core.MapT[string, any]
 }
 
-func NewRequester(m *std.MapT[string, any]) *request.Interface {
+func NewRequester(m *core.MapT[string, any]) *request.Interface {
 	r := new(requestT)
 	r.cache = m
 	return &request.Interface{Execute: r.Execute}

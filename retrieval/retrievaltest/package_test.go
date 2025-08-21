@@ -2,11 +2,11 @@ package retrievaltest
 
 import (
 	"fmt"
-	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/common/core"
 )
 
 func ExampleNewRetriever() {
-	m := std.NewSyncMap[string, any]()
+	m := core.NewSyncMap[string, any]()
 	r := NewRetriever(m)
 
 	fmt.Printf("test: NewRetriever() -> %v\n", r != nil)

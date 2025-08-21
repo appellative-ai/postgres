@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/appellative-ai/core/fmtx"
+	"github.com/appellative-ai/common/fmtx"
 	"reflect"
 	"time"
 )

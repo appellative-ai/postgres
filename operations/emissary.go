@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/common/messaging"
 )
 
 // emissary attention

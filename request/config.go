@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/common/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )

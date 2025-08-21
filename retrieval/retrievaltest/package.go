@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/common/core"
 	"github.com/appellative-ai/postgres/retrieval"
 	"strings"
 )
@@ -17,10 +17,10 @@ const (
 )
 
 type retrievalT struct {
-	cache *std.MapT[string, any]
+	cache *core.MapT[string, any]
 }
 
-func NewRetriever(m *std.MapT[string, any]) *retrieval.Interface {
+func NewRetriever(m *core.MapT[string, any]) *retrieval.Interface {
 	r := new(retrievalT)
 	r.cache = m
 	return &retrieval.Interface{Marshal: r.Marshal, Scan: r.Scan}

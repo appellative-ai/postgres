@@ -2,7 +2,7 @@ package operations
 
 import (
 	"fmt"
-	"github.com/appellative-ai/core/messaging"
+	"github.com/appellative-ai/common/messaging"
 	"github.com/appellative-ai/postgres/request"
 	"github.com/appellative-ai/postgres/retrieval"
 	"github.com/jackc/pgx/v5/pgxpool"

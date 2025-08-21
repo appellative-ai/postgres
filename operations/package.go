@@ -1,8 +1,8 @@
 package operations
 
 import (
-	"github.com/appellative-ai/core/messaging"
-	"github.com/appellative-ai/core/std"
+	"github.com/appellative-ai/common/core"
+	"github.com/appellative-ai/common/messaging"
 	"github.com/appellative-ai/postgres/request"
 	"github.com/appellative-ai/postgres/request/requesttest"
 	"github.com/appellative-ai/postgres/retrieval"
@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	cache *std.MapT[string, any]
+	cache *core.MapT[string, any]
 )
 
 func ConfigClient(cfg map[string]string) error {
@@ -31,7 +31,7 @@ func ConfigLogging(log func(start time.Time, duration time.Duration, route strin
 
 func ConfigSourceOverride() {
 	if cache == nil {
-		cache = std.NewSyncMap[string, any]()
+		cache = core.NewSyncMap[string, any]()
 		retrieval.Retriever = retrievaltest.NewRetriever(cache)
 		request.Requester = requesttest.NewRequester(cache)
 	}
