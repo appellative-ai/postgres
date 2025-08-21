@@ -1,5 +1,7 @@
 github.com/appellative-ai/common v0.0.0-20250821182752-6c0a2c6bf19a h1:9FMD0jcxYrTs2l0ylEvcmKy/8h5YybQAx/Y0rs/b5ZY=
 github.com/appellative-ai/common v0.0.0-20250821182752-6c0a2c6bf19a/go.mod h1:wJm3GmYOJhveTyAiTNsn3rGsYYOVWxWoBi2bJKxWhLs=
+github.com/appellative-ai/common v0.0.0-20250821184524-ff5711ba1dee h1:Eyk7zIeVvj58NE/yaeM/usWwkOTqVwg6ExRrdHRqUQk=
+github.com/appellative-ai/common v0.0.0-20250821184524-ff5711ba1dee/go.mod h1:wJm3GmYOJhveTyAiTNsn3rGsYYOVWxWoBi2bJKxWhLs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
