@@ -29,7 +29,7 @@ func ConfigLogging(log func(start time.Time, duration time.Duration, route strin
 	agent.configLogging(log)
 }
 
-func ConfigSourceOverride() {
+func ConfigStorageOverride() {
 	cache = std.NewSyncMap[string, any]()
 	retrieval.Retriever = retrievaltest.NewRetriever(cache)
 	request.Requester = requesttest.NewRequester(cache)
