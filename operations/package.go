@@ -30,9 +30,11 @@ func ConfigLogging(log func(start time.Time, duration time.Duration, route strin
 }
 
 func ConfigSourceOverride() {
-	cache = std.NewSyncMap[string, any]()
-	retrieval.Retriever = retrievaltest.NewRetriever(cache)
-	request.Requester = requesttest.NewRequester(cache)
+	if cache == nil {
+		cache = std.NewSyncMap[string, any]()
+		retrieval.Retriever = retrievaltest.NewRetriever(cache)
+		request.Requester = requesttest.NewRequester(cache)
+	}
 }
 
 func Startup() {
